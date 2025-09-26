@@ -12,87 +12,40 @@ public class MascotaCreateDTO {
     private String estado;
     private Long clienteId;
 
-    public String getNombre() {
-        return nombre;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public String getRaza() { return raza; }
+    public void setRaza(String raza) { this.raza = raza; }
 
-    public String getRaza() {
-        return raza;
-    }
+    public int getEdad() { return edad; }
+    public void setEdad(int edad) { this.edad = edad; }
 
-    public void setRaza(String raza) {
-        this.raza = raza;
-    }
+    public String getTipo() { return tipo; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
 
-    public int getEdad() {
-        return edad;
-    }
+    public String getEnfermedad() { return enfermedad; }
+    public void setEnfermedad(String enfermedad) { this.enfermedad = enfermedad; }
 
-    public void setEdad(int edad) {
-        this.edad = edad;
-    }
+    public double getPeso() { return peso; }
+    public void setPeso(double peso) { this.peso = peso; }
 
-    public String getTipo() {
-        return tipo;
-    }
+    public String getFotoURL() { return fotoURL; }
+    public void setFotoURL(String fotoURL) { this.fotoURL = fotoURL; }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
+    public boolean isActivo() { return activo; }
+    public void setActivo(boolean activo) { this.activo = activo; }
 
-    public String getEnfermedad() {
-        return enfermedad;
-    }
+    public Long getClienteId() { return clienteId; }
+    public void setClienteId(Long clienteId) { this.clienteId = clienteId; }
 
-    public void setEnfermedad(String enfermedad) {
-        this.enfermedad = enfermedad;
-    }
-
-    public double getPeso() {
-        return peso;
-    }
-
-    public void setPeso(double peso) {
-        this.peso = peso;
-    }
-
-    public String getFotoURL() {
-        return fotoURL;
-    }
-
-    public void setFotoURL(String fotoURL) {
-        this.fotoURL = fotoURL;
-    }
-
-    public boolean isActivo() {
-        return activo;
-    }
-
-    public void setActivo(boolean activo) {
-        this.activo = activo;
-    }
-
-    public Long getClienteId() { 
-    return clienteId; 
-    }
-
-    public void setClienteId(Long clienteId) { 
-        this.clienteId = clienteId; 
-    }
-
+    public String getEstado() { return estado; }
+    
     public void setEstado(String estado) {
-        if (estado == null || estado.trim().isEmpty() || estado.equalsIgnoreCase("ninguno")) {
-            this.estado = "Sano";
-        } else {
+        if (estado != null && !estado.trim().isEmpty() && !"ninguno".equalsIgnoreCase(estado)) {
             this.estado = "Enfermo";
+        } else {
+            this.estado = "Sano";
         }
-    }
-
-    public String getEstado() { 
-        return this.estado;
     }
 }
