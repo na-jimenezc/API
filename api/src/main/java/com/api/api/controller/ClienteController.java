@@ -3,7 +3,6 @@ package com.api.api.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,30 +31,30 @@ public class ClienteController {
 
     //Función para obtener todos los clientes
     @GetMapping
-    public ResponseEntity<List<Cliente>> obtenerClientes() {
-        return ResponseEntity.ok(clienteService.obtenerTodos());
+    public List<Cliente> obtenerClientes() {
+        return clienteService.obtenerTodos();
     }
 
     //Función para obtener un cliente por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Cliente> obtenerClientePorId(@PathVariable Long id) {
+    public Cliente obtenerClientePorId(@PathVariable Long id) {
         Cliente cliente = clienteService.obtenerClientePorId(id);
-        return (cliente != null) ? ResponseEntity.ok(cliente) : ResponseEntity.notFound().build();
+        return (cliente != null) ? cliente : null;
     }
 
     //Función para crear un nuevo cliente
     @PostMapping
-    public ResponseEntity<Cliente> crearCliente(@RequestBody Cliente cliente) {
+    public Cliente crearCliente(@RequestBody Cliente cliente) {
         if (clienteService.existeClientePorCedula(cliente.getCedula())) {
-            return ResponseEntity.badRequest().body(null);
+           return null;
         }
         Cliente nuevo = clienteService.guardarCliente(cliente);
-        return ResponseEntity.ok(nuevo);
+        return nuevo;
     }
 
     //Función para actualizar un cliente existente
     @PutMapping("/{id}")
-    public ResponseEntity<Cliente> actualizarCliente(
+    public Cliente actualizarCliente(
             @PathVariable Long id,
             @RequestBody Cliente clienteRequest) {
         try {
@@ -66,42 +65,42 @@ public class ClienteController {
                     clienteRequest.getCorreo(),
                     clienteRequest.getCelular()
             );
-            return ResponseEntity.ok(actualizado);
+            return actualizado;
         } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            e.getMessage();
+            return null;
         }
     }
 
     //Función para eliminar un cliente permanentemente
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarCliente(@PathVariable Long id) {
+    public void eliminarCliente(@PathVariable Long id) {
         clienteService.eliminarClienteHard(id);
-        return ResponseEntity.noContent().build();
     }
 
     //Función para listar mascotas por cliente
     @GetMapping("/{id}/mascotas")
-    public ResponseEntity<List<Mascota>> obtenerMascotasPorCliente(@PathVariable Long id) {
+    public List<Mascota> obtenerMascotasPorCliente(@PathVariable Long id) {
         List<Mascota> mascotas = clienteService.obtenerMascotasPorClienteId(id);
-        return ResponseEntity.ok(mascotas);
+        return mascotas;
     }
 
     //Función para obtener un cliente por cédula
     @GetMapping("/cedula/{cedula}")
-    public ResponseEntity<Cliente> obtenerPorCedula(@PathVariable String cedula) {
+    public Cliente obtenerPorCedula(@PathVariable String cedula) {
         Cliente cliente = clienteService.obtenerPorCedula(cedula);
-        return (cliente != null) ? ResponseEntity.ok(cliente) : ResponseEntity.notFound().build();
+        return (cliente != null) ? cliente : null;
     }
 
     //Función para login de cliente
     @PostMapping("/login")
-    public ResponseEntity<Cliente> loginCliente(@RequestBody Cliente loginRequest) {
+    public Cliente loginCliente(@RequestBody Cliente loginRequest) {
         Cliente cliente = clienteService.obtenerClientePorCorreo(loginRequest.getCorreo());
 
         //Significa que no está autorizado
         if (cliente == null) {
-            return ResponseEntity.status(401).build(); 
+            return null; 
         }
-        return ResponseEntity.ok(cliente);
+        return cliente;
     }
 }

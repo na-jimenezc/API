@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+#Ignorar la base de datos H2
+/data/animalheartdb.mv.db
