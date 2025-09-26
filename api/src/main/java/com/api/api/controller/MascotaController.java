@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.api.api.dto.MascotaCreateDTO;
+import com.api.api.dto.MascotaDTO;
 import com.api.api.model.Cliente;
 import com.api.api.model.Mascota;
 import com.api.api.service.serviceInterface.ClienteService;
@@ -58,15 +60,39 @@ public class MascotaController {
 
     //Función para crear una nueva mascota
     @PostMapping
-    public Mascota crearMascota(@RequestBody Mascota mascota,
-                                                @RequestParam("clienteId") Long clienteId) {
-        Cliente cliente = clienteService.obtenerClientePorId(clienteId);
+    public MascotaDTO crearMascota(@RequestBody MascotaCreateDTO dto) {
+        Cliente cliente = clienteService.obtenerClientePorId(dto.getClienteId());
         if (cliente == null) {
-            return null;
+            throw new RuntimeException("Cliente no encontrado");
         }
+
+        Mascota mascota = new Mascota();
+        mascota.setNombre(dto.getNombre());
+        mascota.setRaza(dto.getRaza());
+        mascota.setEdad(dto.getEdad());
+        mascota.setTipo(dto.getTipo());
+        mascota.setEnfermedad(dto.getEnfermedad());
+        mascota.setPeso(dto.getPeso());
+        mascota.setFotoURL(dto.getFotoURL());
+        mascota.setActivo(dto.isActivo());
+        mascota.setEstado(dto.getEstado());
         mascota.setCliente(cliente);
+
         Mascota guardada = mascotaService.registrarMascota(mascota);
-        return guardada;
+
+        return new MascotaDTO(
+            guardada.getId(),
+            guardada.getNombre(),
+            guardada.getRaza(),
+            guardada.getEdad(),
+            guardada.getTipo(),
+            guardada.getEnfermedad(),
+            guardada.getPeso(),
+            guardada.getFotoURL(),
+            guardada.getActivo(),
+            guardada.getCliente().getId(),
+            guardada.getEstado()
+        );
     }
 
     //Función para actualizar una mascota existente
