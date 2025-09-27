@@ -1,10 +1,11 @@
 package com.api.api.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,11 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.api.dto.MascotaCreateDTO;
 import com.api.api.dto.MascotaDTO;
+import com.api.api.dto.MascotaUpdateDTO;
 import com.api.api.model.Cliente;
 import com.api.api.model.Mascota;
 import com.api.api.service.serviceInterface.ClienteService;
@@ -41,21 +42,48 @@ public class MascotaController {
     }
 
     //Función para obtener mascotas paginadas
-    @GetMapping("/paginadas")
-    public Page<Mascota> listarMascotasPaginadas(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
-        return mascotaService.obtenerMascotasPaginadas(PageRequest.of(page, size));
+     @GetMapping("/todas")
+    public List<MascotaDTO> listarTodasMascotas() {
+        List<Mascota> mascotas = mascotaService.obtenerTodasMascotas();
+        
+        return mascotas.stream()
+                .map(mascota -> new MascotaDTO(
+                    mascota.getId(),
+                    mascota.getNombre(),
+                    mascota.getRaza(),
+                    mascota.getEdad(),
+                    mascota.getTipo(),
+                    mascota.getEnfermedad(),
+                    mascota.getPeso(),
+                    mascota.getFotoURL(),
+                    mascota.getActivo(),
+                    mascota.getCliente() != null ? mascota.getCliente().getId() : null,
+                    mascota.getEstado()
+                ))
+                .collect(Collectors.toList());
     }
+
 
     //Función para ver detalle de una mascota por ID
     @GetMapping("/{id}")
-    public Mascota verDetalleMascota(@PathVariable Long id) {
+    public MascotaDTO verDetalleMascota(@PathVariable Long id) {
         Mascota mascota = mascotaService.obtenerMascotaPorId(id);
         if (mascota == null) {
             return null;
         }
-        return mascota;
+        return new MascotaDTO(
+            mascota.getId(),
+            mascota.getNombre(),
+            mascota.getRaza(),
+            mascota.getEdad(),
+            mascota.getTipo(),
+            mascota.getEnfermedad(),
+            mascota.getPeso(),
+            mascota.getFotoURL(),
+            mascota.getActivo(),
+            mascota.getCliente() != null ? mascota.getCliente().getId() : null,
+            mascota.getEstado()
+        );
     }
 
     //Función para crear una nueva mascota
@@ -97,20 +125,28 @@ public class MascotaController {
 
     //Función para actualizar una mascota existente
     @PutMapping("/{id}")
-    public Mascota actualizarMascota(
+    public ResponseEntity<?> actualizarMascota(
             @PathVariable Long id,
-            @RequestBody Mascota mascota) {
+            @RequestBody MascotaUpdateDTO dto) { 
+        try {
+            Mascota actualizada = mascotaService.actualizarMascota(
+                    id,
+                    dto.getNombre(),
+                    dto.getTipo(),
+                    dto.getRaza(),
+                    dto.getEnfermedad(),
+                    dto.getFotoURL(),
+                    dto.isActivo()
+            );
+        if (actualizada == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Mascota no encontrada con ID: " + id);
+        }return ResponseEntity.ok(actualizada);
 
-        Mascota actualizada = mascotaService.actualizarMascota(
-                id,
-                mascota.getNombre(),
-                mascota.getTipo(),
-                mascota.getRaza(),
-                mascota.getEnfermedad(),
-                mascota.getFotoURL(),
-                mascota.getActivo()
-        );
-        return actualizada;
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error al actualizar mascota: " + e.getMessage());
+        }
     }
 
     //Función para desactivar una mascota 

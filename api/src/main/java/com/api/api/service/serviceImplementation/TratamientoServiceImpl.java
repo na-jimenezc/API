@@ -52,10 +52,11 @@ public class TratamientoServiceImpl implements TratamientoService {
         return tratamientoRepository.save(tratamiento);
     }
 
-    @Override
-    public List<Tratamiento> obtenerTratamientosPorMascota(Long idMascota) {
-        return tratamientoRepository.findByMascotaId(idMascota);
-    }
+
+        @Override
+        public List<Tratamiento> obtenerTratamientosPorMascota(Long mascotaId) {
+        return tratamientoRepository.findByMascotaIdWithRelations(mascotaId);
+ }
 
     @Override
     public Tratamiento administrarMedicamento(Long idMascota, Long idMedicamento, Long idVeterinario, int cantidadUsada) {

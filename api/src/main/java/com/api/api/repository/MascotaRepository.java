@@ -2,6 +2,9 @@ package com.api.api.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,7 +13,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.api.api.model.Mascota;
-
 
 
 @Repository
@@ -29,5 +31,9 @@ public interface MascotaRepository extends JpaRepository<Mascota, Long> {
        @Transactional
        @Query("DELETE FROM Mascota m WHERE m.cliente.id = :clienteId")
        void deleteByClienteId(@Param("clienteId") Long clienteId);
+
+   @EntityGraph(attributePaths = {"cliente"})
+   @Override
+   Page<Mascota> findAll(Pageable pageable);
 
 }

@@ -46,9 +46,9 @@ public class DatabaseInit implements ApplicationRunner {
         Administrador admin1 = new Administrador("Administrador Principal", "admin@animalheart.com", "admin123");
         administradorRepository.save(admin1);
 
-        Veterinario vet1 = new Veterinario("Dr. Juan Pérez", "Cirugía", "juanPerez", "123", "/IMAGES/drJuan.jpeg", 1, 100);
-        Veterinario vet2 = new Veterinario("Dra. Laura Gómez", "Dermatología", "lauraGomez", "123", "/IMAGES/draLaura.jpeg", 1, 85);
-        Veterinario vet3 = new Veterinario("Dr. Carlos Rodríguez", "Cardiología", "carlosRod", "123", "/IMAGES/drCarlos.jpeg", 1, 120);
+        Veterinario vet1 = new Veterinario("Dr. Juan Pérez", "Cirugía", "juanPerez", "123", "/assets/images/drJuan.jpeg", 1, 100);
+        Veterinario vet2 = new Veterinario("Dra. Laura Gómez", "Dermatología", "lauraGomez", "123", "/assets/images/draLaura.jpeg", 1, 85);
+        Veterinario vet3 = new Veterinario("Dr. Carlos Rodríguez", "Cardiología", "carlosRod", "123", "/assets/images/drCarlos.jpeg", 1, 120);
         
         veterinarioRepository.saveAll(Arrays.asList(vet1, vet2, vet3));
 
@@ -65,19 +65,19 @@ public class DatabaseInit implements ApplicationRunner {
 
         clienteRepository.saveAll(Arrays.asList(cliente1, cliente2, cliente3, cliente4, cliente5));
 
-        Mascota mascota1 = new Mascota("Firulais", "Criollo", 3, "Perro", "Ninguna", 25.4, "/IMAGES/firulais.jpg", "Sano", true);
+        Mascota mascota1 = new Mascota("Firulais", "Criollo", 3, "Perro", "Ninguna", 25.4, "/assets/images/firulais.jpg", "Sano", true);
         mascota1.setCliente(cliente1);
         
-        Mascota mascota2 = new Mascota("Roberto", "Persa", 2, "Gato", "Ninguna", 4.8, "/IMAGES/roberto.jpeg", "Sano", true);
+        Mascota mascota2 = new Mascota("Roberto", "Persa", 2, "Gato", "Ninguna", 4.8, "/assets/images/roberto.jpeg", "Sano", true);
         mascota2.setCliente(cliente2);
         
-        Mascota mascota3 = new Mascota("Rocky", "Criollo", 5, "Perro", "Patita torcida", 30.2, "/IMAGES/rocky.jpeg", "Enfermo", false);
+        Mascota mascota3 = new Mascota("Rocky", "Criollo", 5, "Perro", "Patita torcida", 30.2, "/assets/images/rocky.jpeg", "Enfermo", false);
         mascota3.setCliente(cliente3);
         
-        Mascota mascota4 = new Mascota("Luna", "Siamés", 4, "Gato", "Problemas digestivos", 3.5, "/IMAGES/luna.jpeg", "Enfermo", true);
+        Mascota mascota4 = new Mascota("Luna", "Siamés", 4, "Gato", "Problemas digestivos", 3.5, "/assets/images/luna.jpeg", "Enfermo", true);
         mascota4.setCliente(cliente4);
         
-        Mascota mascota5 = new Mascota("Max", "Labrador", 2, "Perro", "Alergias", 28.0, "/IMAGES/max.jpeg", "Sano", false);
+        Mascota mascota5 = new Mascota("Max", "Labrador", 2, "Perro", "Alergias", 28.0, "/assets/images/max.jpeg", "Sano", false);
         mascota5.setCliente(cliente5);
         
         mascotaRepository.saveAll(Arrays.asList(mascota1, mascota2, mascota3, mascota4, mascota5));
@@ -199,8 +199,8 @@ public class DatabaseInit implements ApplicationRunner {
                 : razasGatos.get(random.nextInt(razasGatos.size()));
 
             String fotoUrl = esPerro 
-                ? "/IMAGES/defaultPerro.jpg"
-                : "/IMAGES/defaultGato.png";
+                ? "/assets/images/defaultPerro.jpg"
+                : "/assets/images/defaultGato.png";
 
             String enfermedad = enfermedades.get(random.nextInt(enfermedades.size()));
             Double peso = 2.0 + (30.0 * random.nextDouble());

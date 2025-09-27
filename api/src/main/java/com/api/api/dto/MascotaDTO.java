@@ -13,7 +13,6 @@ public class MascotaDTO {
     private Long clienteId;
     private String estado;
 
-    // Constructor completo
     public MascotaDTO(Long id, String nombre, String raza, int edad, String tipo,
                       String enfermedad, double peso, String fotoURL, boolean activo,
                       Long clienteId, String estado) {
@@ -31,6 +30,7 @@ public class MascotaDTO {
     }
 
     public MascotaDTO() {} 
+
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

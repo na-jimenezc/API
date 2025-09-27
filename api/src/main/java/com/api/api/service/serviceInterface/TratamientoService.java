@@ -5,9 +5,8 @@ import java.util.List;
 
 import com.api.api.model.Tratamiento;
 
-
 public interface TratamientoService {
     Tratamiento crearTratamiento(LocalDate fecha, int cantidad, Long idMascota, Long idMedicamento, Long idVeterinario);
-    List<Tratamiento> obtenerTratamientosPorMascota(Long idMascota);
+    List<Tratamiento> obtenerTratamientosPorMascota(Long mascotaId);
     Tratamiento administrarMedicamento(Long idMascota, Long idMedicamento, Long idVeterinario, int cantidadUsada);
 }
