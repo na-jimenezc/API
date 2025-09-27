@@ -87,8 +87,14 @@ public class DatabaseInit implements ApplicationRunner {
         Medicamento med3 = new Medicamento("Ketoprofeno", 2.5f, 5.0f, 60, 12);
         Medicamento med4 = new Medicamento("Metronidazol", 1.8f, 3.5f, 90, 8);
         Medicamento med5 = new Medicamento("Carprofeno", 2.2f, 4.0f, 75, 6);
+        Medicamento med6 = new Medicamento("Meloxicam", 2.3f, 4.8f, 70, 7);
+        Medicamento med7 = new Medicamento("Doxiciclina", 1.9f, 3.6f, 65, 9);
+        Medicamento med8 = new Medicamento("Enrofloxacina", 2.7f, 5.2f, 85, 6);
+        Medicamento med9 = new Medicamento("Prednisolona", 1.6f, 3.2f, 50, 11);
+        Medicamento med10 = new Medicamento("Cefalexina", 2.4f, 4.9f, 95, 8);
 
         medicamentosRepository.saveAll(Arrays.asList(med1, med2, med3, med4, med5));
+        medicamentosRepository.saveAll(Arrays.asList(med6, med7, med8, med9, med10));
 
         Tratamiento tratamiento1 = new Tratamiento(LocalDate.now(), 2);
         tratamiento1.setMascota(mascota1);
@@ -119,6 +125,31 @@ public class DatabaseInit implements ApplicationRunner {
         tratamiento6.setMascota(mascota1);
         tratamiento6.setMedicamento(med2);
         tratamiento6.setVeterinario(vet3);
+
+        Tratamiento tratamiento7 = new Tratamiento(LocalDate.now().minusDays(7), 2);
+        tratamiento7.setMascota(mascota2);
+        tratamiento7.setMedicamento(med6);
+        tratamiento7.setVeterinario(vet1);
+
+        Tratamiento tratamiento8 = new Tratamiento(LocalDate.now().minusDays(10), 1);
+        tratamiento8.setMascota(mascota3);
+        tratamiento8.setMedicamento(med7);
+        tratamiento8.setVeterinario(vet2);
+
+        Tratamiento tratamiento9 = new Tratamiento(LocalDate.now().minusWeeks(2), 3);
+        tratamiento9.setMascota(mascota4);
+        tratamiento9.setMedicamento(med8);
+        tratamiento9.setVeterinario(vet3);
+
+        Tratamiento tratamiento10 = new Tratamiento(LocalDate.now().minusDays(15), 1);
+        tratamiento10.setMascota(mascota5);
+        tratamiento10.setMedicamento(med9);
+        tratamiento10.setVeterinario(vet1);
+
+        Tratamiento tratamiento11 = new Tratamiento(LocalDate.now().minusDays(20), 2);
+        tratamiento11.setMascota(mascota1);
+        tratamiento11.setMedicamento(med10);
+        tratamiento11.setVeterinario(vet2);
         
         tratamientosRepository.save(tratamiento1);
         tratamientosRepository.save(tratamiento2);
@@ -126,6 +157,11 @@ public class DatabaseInit implements ApplicationRunner {
         tratamientosRepository.save(tratamiento4);
         tratamientosRepository.save(tratamiento5);
         tratamientosRepository.save(tratamiento6);
+        tratamientosRepository.save(tratamiento7);
+        tratamientosRepository.save(tratamiento8);
+        tratamientosRepository.save(tratamiento9);
+        tratamientosRepository.save(tratamiento10);
+        tratamientosRepository.save(tratamiento11);
 
         List<String> nombresClientes = Arrays.asList(
             "Carlos", "Lucía", "Mateo", "Ana", "Diego", "Laura", "Andrés", "Paula", "Felipe", "Valentina",
