@@ -1,21 +1,14 @@
+// src/main/java/com/api/api/controller/VeterinarioController.java
 package com.api.api.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.api.api.dto.VeterinarioLoginRequest;
 import com.api.api.model.Veterinario;
 import com.api.api.service.serviceInterface.VeterinarioService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -25,62 +18,49 @@ public class VeterinarioController {
     @Autowired
     private VeterinarioService veterinarioService;
 
-    //Post para el login del veterinario
+    // === LOGIN ===
     @PostMapping("/login")
-    public Veterinario loginVeterinario(@RequestParam String nombreUsuario,
-                                              @RequestParam String contrasenia) {
+    public ResponseEntity<?> loginVeterinario(@RequestParam String nombreUsuario,
+                                            @RequestParam String contrasenia) {
         Veterinario vet = veterinarioService.validarVeterinario(nombreUsuario, contrasenia);
         if (vet != null) {
-            return vet;
+            return ResponseEntity.ok(vet); // 200 con el JSON del veterinario
         }
-        return null;
+        return ResponseEntity.status(401).body("Credenciales inválidas"); // <-- importante
     }
 
-    //Función para obtener todos los veterinarios
+    // === REST (lo que ya tienes) ===
     @GetMapping
     public List<Veterinario> obtenerTodos() {
         return veterinarioService.obtenerTodos();
     }
 
-    //Función para obtener todos los veterinarios activos
     @GetMapping("/activos")
     public List<Veterinario> obtenerActivos() {
         return veterinarioService.obtenerVeterinariosActivos();
     }
 
-    //Función para obtener un veterinario por ID
     @GetMapping("/{id}")
-    public Veterinario obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
         Veterinario vet = veterinarioService.obtenerVeterinarioPorId(id);
-        if (vet == null) {
-           return null;
-        }
-        return vet;
+        return vet == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(vet);
     }
 
-    //Función para crear un nuevo veterinario
     @PostMapping
-    public Veterinario crearVeterinario(@RequestBody Veterinario veterinario) {
-        Veterinario nuevoVet = veterinarioService.guardarVeterinario(veterinario);
-        return nuevoVet;
+    public Veterinario crear(@RequestBody Veterinario veterinario) {
+        return veterinarioService.guardarVeterinario(veterinario);
     }
 
-    //Función para actualizar un veterinario existente
     @PutMapping("/{id}")
-    public Veterinario actualizarVeterinario(@PathVariable Long id,
-                                                   @RequestBody Veterinario veterinario) {
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Veterinario veterinario) {
         Veterinario existente = veterinarioService.obtenerVeterinarioPorId(id);
-        if (existente == null) {
-            return null;
-        }
-        veterinario.setId(id); 
-        Veterinario actualizado = veterinarioService.guardarVeterinario(veterinario);
-        return actualizado;
+        if (existente == null) return ResponseEntity.notFound().build();
+        veterinario.setId(id);
+        return ResponseEntity.ok(veterinarioService.guardarVeterinario(veterinario));
     }
 
-    //Función para eliminar un veterinario por ID
     @DeleteMapping("/{id}")
-    public void eliminarVeterinario(@PathVariable Long id) {
+    public void eliminar(@PathVariable Long id) {
         veterinarioService.eliminarVeterinario(id);
     }
 }
