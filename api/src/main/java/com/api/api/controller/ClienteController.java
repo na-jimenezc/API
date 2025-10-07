@@ -3,6 +3,7 @@ package com.api.api.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -92,15 +93,17 @@ public class ClienteController {
         return (cliente != null) ? cliente : null;
     }
 
-    //Función para login de cliente
+    // === LOGIN DE CLIENTE ===
     @PostMapping("/login")
-    public Cliente loginCliente(@RequestBody Cliente loginRequest) {
-        Cliente cliente = clienteService.obtenerClientePorCorreo(loginRequest.getCorreo());
-
-        //Significa que no está autorizado
-        if (cliente == null) {
-            return null; 
+    public ResponseEntity<?> loginCliente(@RequestBody Cliente loginRequest) {
+        if (loginRequest == null || loginRequest.getCorreo() == null || loginRequest.getCedula() == null) {
+            return ResponseEntity.badRequest().body("Faltan campos obligatorios");
         }
-        return cliente;
+
+        Cliente cliente = clienteService.validarCliente(loginRequest.getCorreo(), loginRequest.getCedula());
+        if (cliente != null) {
+            return ResponseEntity.ok(cliente);
+        }
+        return ResponseEntity.status(401).body("Credenciales incorrectas");
     }
 }

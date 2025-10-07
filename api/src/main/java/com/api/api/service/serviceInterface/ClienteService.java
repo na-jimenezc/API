@@ -18,5 +18,6 @@ public interface ClienteService {
     Cliente obtenerClientePorCorreo(String correo);
 
     List<Mascota> obtenerMascotasPorClienteId(Long id);
+    Cliente validarCliente(String correo, String cedula);
 }
 

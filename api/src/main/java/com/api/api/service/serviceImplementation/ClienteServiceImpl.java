@@ -77,4 +77,13 @@ public class ClienteServiceImpl implements ClienteService {
         }
         return List.of();
     }
+
+    @Override
+    public Cliente validarCliente(String correo, String cedula) {
+        Cliente c = clienteRepository.findByCorreo(correo);
+        if (c != null && c.getCedula() != null && c.getCedula().equals(cedula)) {
+            return c;
+        }
+        return null;
+    }
 }
