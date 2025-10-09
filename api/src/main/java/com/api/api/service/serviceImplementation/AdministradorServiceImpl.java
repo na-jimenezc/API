@@ -1,8 +1,7 @@
 package com.api.api.service.serviceImplementation;
+
 import java.util.List;
-
 import org.springframework.stereotype.Service;
-
 import com.api.api.model.Administrador;
 import com.api.api.repository.AdministradorRepository;
 import com.api.api.service.serviceInterface.AdministradorService;

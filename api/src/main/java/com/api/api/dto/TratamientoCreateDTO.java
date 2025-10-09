@@ -37,6 +37,4 @@ public class TratamientoCreateDTO {
     public void setVeterinarioId(Long veterinarioId) {
         this.veterinarioId = veterinarioId;
     }
-
-
 }

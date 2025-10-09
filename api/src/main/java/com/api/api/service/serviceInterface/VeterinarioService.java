@@ -1,7 +1,6 @@
 package com.api.api.service.serviceInterface;
 
 import java.util.List;
-
 import com.api.api.model.Veterinario;
 
 public interface VeterinarioService {

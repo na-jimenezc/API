@@ -1,4 +1,3 @@
-
 package com.api.api.dto;
 
 public class MascotaUpdateDTO {
@@ -9,7 +8,8 @@ public class MascotaUpdateDTO {
     private String fotoURL;
     private boolean activo;
 
-    public MascotaUpdateDTO() {}
+    public MascotaUpdateDTO() {
+    }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }

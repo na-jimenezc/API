@@ -1,4 +1,3 @@
-// src/main/java/com/api/api/controller/VeterinarioController.java
 package com.api.api.controller;
 
 import com.api.api.dto.VeterinarioLoginRequest;
@@ -7,7 +6,6 @@ import com.api.api.service.serviceInterface.VeterinarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -18,18 +16,16 @@ public class VeterinarioController {
     @Autowired
     private VeterinarioService veterinarioService;
 
-    // === LOGIN ===
     @PostMapping("/login")
     public ResponseEntity<?> loginVeterinario(@RequestParam String nombreUsuario,
                                             @RequestParam String contrasenia) {
         Veterinario vet = veterinarioService.validarVeterinario(nombreUsuario, contrasenia);
         if (vet != null) {
-            return ResponseEntity.ok(vet); // 200 con el JSON del veterinario
+            return ResponseEntity.ok(vet);
         }
-        return ResponseEntity.status(401).body("Credenciales inválidas"); // <-- importante
+        return ResponseEntity.status(401).body("Credenciales inválidas");
     }
 
-    // === REST (lo que ya tienes) ===
     @GetMapping
     public List<Veterinario> obtenerTodos() {
         return veterinarioService.obtenerTodos();

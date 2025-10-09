@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.Normalizer;
 import java.util.*;
-import java.text.Normalizer;
-
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,7 +50,6 @@ public class MedicamentoServiceImpl implements MedicamentoService {
 
             DataFormatter fmt = new DataFormatter();
 
-            // --- cabecera ---
             Row header = sheet.getRow(sheet.getFirstRowNum());
             if (header == null) return 0;
 
@@ -65,7 +61,6 @@ public class MedicamentoServiceImpl implements MedicamentoService {
 
             boolean conId = idx.containsKey("ID");
 
-            // nombres a conservar (normalizados) para el replace
             Set<String> keepNames = new HashSet<>();
 
             int count = 0;
@@ -89,7 +84,6 @@ public class MedicamentoServiceImpl implements MedicamentoService {
                     med = medicamentoRepository.findById(id).orElseGet(Medicamento::new);
                     med.setId(id);
                 } else {
-                    // si no usas findByNombreIgnoreCase, basta con buscar todos y filtrar (menos eficiente)
                     med = medicamentoRepository.findAll().stream()
                             .filter(m -> m.getNombre()!=null
                                 && m.getNombre().equalsIgnoreCase(nombre))
@@ -107,7 +101,6 @@ public class MedicamentoServiceImpl implements MedicamentoService {
                 count++;
             }
 
-            // --- eliminar los que no están en el Excel ---
             if (replace) {
                 List<Medicamento> actuales = medicamentoRepository.findAll();
                 for (Medicamento m : actuales) {
@@ -121,14 +114,12 @@ public class MedicamentoServiceImpl implements MedicamentoService {
         }
     }
 
-    // ---------- Helpers robustos ----------
     private static String norm(String s) {
         if (s == null) return "";
         String t = Normalizer.normalize(s.trim(), Normalizer.Form.NFD)
-                .replaceAll("\\p{M}", "")   // quita acentos
-                .replace(" ", "_")          // espacios -> _
+                .replaceAll("\\p{M}", "")
+                .replace(" ", "_")
                 .toUpperCase();
-        // alias más tolerantes
         if (t.startsWith("PRECIO_V")) {
             if (t.contains("COMPRA")) return "PRECIO_COMPRA";
             if (t.contains("VENTA"))  return "PRECIO_VENTA";
@@ -155,7 +146,7 @@ public class MedicamentoServiceImpl implements MedicamentoService {
     private static Long parseLong(String s) {
         try {
             if (s == null || s.isBlank()) return null;
-            return Long.parseLong(s.replaceAll("[^0-9\\-]", "")); // tolera $, comas, espacios
+            return Long.parseLong(s.replaceAll("[^0-9\\-]", ""));
         } catch (NumberFormatException e) { return null; }
     }
     private static Integer parseInt(String s) {

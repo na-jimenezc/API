@@ -2,7 +2,6 @@ package com.api.api.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.api.api.dto.MascotaCreateDTO;
 import com.api.api.dto.MascotaDTO;
 import com.api.api.dto.MascotaUpdateDTO;
@@ -35,13 +33,11 @@ public class MascotaController {
     @Autowired
     private ClienteService clienteService;
 
-    //Función para obtener todas las mascotas
     @GetMapping
     public List<Mascota> listarMascotas() {
         return (mascotaService.obtenerTodasMascotas());
     }
 
-    //Función para obtener mascotas paginadas
      @GetMapping("/todas")
     public List<MascotaDTO> listarTodasMascotas() {
         List<Mascota> mascotas = mascotaService.obtenerTodasMascotas();
@@ -63,8 +59,6 @@ public class MascotaController {
                 .collect(Collectors.toList());
     }
 
-
-    //Función para ver detalle de una mascota por ID
     @GetMapping("/{id}")
     public MascotaDTO verDetalleMascota(@PathVariable Long id) {
         Mascota mascota = mascotaService.obtenerMascotaPorId(id);
@@ -86,7 +80,6 @@ public class MascotaController {
         );
     }
 
-    //Función para crear una nueva mascota
     @PostMapping
     public MascotaDTO crearMascota(@RequestBody MascotaCreateDTO dto) {
         Cliente cliente = clienteService.obtenerClientePorId(dto.getClienteId());
@@ -123,7 +116,6 @@ public class MascotaController {
         );
     }
 
-    //Función para actualizar una mascota existente
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarMascota(
             @PathVariable Long id,
@@ -149,19 +141,16 @@ public class MascotaController {
         }
     }
 
-    //Función para desactivar una mascota 
     @DeleteMapping("/{id}/desactivar")
     public void desactivarMascota(@PathVariable Long id) {
         mascotaService.desactivarMascota(id);
     }
 
-    //Función para eliminar una mascota permanentemente
     @DeleteMapping("/{id}")
     public void eliminarMascota(@PathVariable Long id) {
         mascotaService.eliminarMascotaHard(id);
     }
 
-    //Función para listar mascotas por cliente
     @GetMapping("/cliente/{clienteId}")
     public List<Mascota> listarPorCliente(@PathVariable Long clienteId) {
         return mascotaService.obtenerMascotasPorClienteId(clienteId);

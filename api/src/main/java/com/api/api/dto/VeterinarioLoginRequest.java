@@ -1,4 +1,3 @@
-// src/main/java/com/api/api/dto/VeterinarioLoginRequest.java
 package com.api.api.dto;
 
 public class VeterinarioLoginRequest {

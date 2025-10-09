@@ -6,8 +6,6 @@ public class MedicamentoCreateDTO {
     private float precioVenta;
     private int unidadesDisponibles;
 
-    
-
     public String getNombre() {
         return nombre;
     }
@@ -39,6 +37,4 @@ public class MedicamentoCreateDTO {
     public void setUnidadesDisponibles(int unidadesDisponibles) {
         this.unidadesDisponibles = unidadesDisponibles;
     }
-
-
 }

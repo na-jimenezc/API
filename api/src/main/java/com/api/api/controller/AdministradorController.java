@@ -8,11 +8,10 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;   // ⬅⬅⬅ FALTA
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.api.api.dto.LoginRequest;                     // ⬅⬅⬅ FALTA
+import com.api.api.dto.LoginRequest;
 import com.api.api.model.Administrador;
 import com.api.api.model.Veterinario;
 import com.api.api.service.serviceInterface.AdministradorService;

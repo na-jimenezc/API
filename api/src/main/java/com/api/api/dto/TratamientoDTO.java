@@ -7,7 +7,6 @@ public class TratamientoDTO {
     private MedicamentoDTO medicamento;
     private VeterinarioDTO veterinario;
 
-
     public TratamientoDTO() {
     }
 
@@ -58,9 +57,4 @@ public class TratamientoDTO {
     public void setVeterinario(VeterinarioDTO veterinario) {
         this.veterinario = veterinario;
     }
-    
-
-    
-
-
 }

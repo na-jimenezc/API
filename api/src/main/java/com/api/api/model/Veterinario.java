@@ -2,11 +2,9 @@ package com.api.api.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,14 +13,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 
-
 @Entity
 public class Veterinario {
 
     @Id
     @GeneratedValue
     private Long id;
-
     private String nombre;
     private String especialidad;
     private String nombreUsuario;
@@ -146,5 +142,4 @@ public class Veterinario {
     public void setAdministradores(List<Administrador> administradores) {
             this.administradores = administradores;
     }
-
 }

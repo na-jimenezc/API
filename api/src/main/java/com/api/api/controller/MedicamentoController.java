@@ -29,14 +29,11 @@ public class MedicamentoController {
     @Autowired
     private MedicamentoService medicamentoService;
 
-
-    //Función para listar todos los medicamentos
     @GetMapping
     public List<Medicamento> listarMedicamentos() {
         return medicamentoService.obtenerTodos();
     }
 
-    //Función para obtener medicamento por id
     @GetMapping("/{id}")
     public Medicamento obtenerMedicamento(@PathVariable Long id) {
         Medicamento medicamento = medicamentoService.obtenerPorId(id);
@@ -46,13 +43,11 @@ public class MedicamentoController {
         return medicamento;
     }
 
-    //Función para crear un nuevo medicamento (solo admin)
     @PostMapping
     public Medicamento crearMedicamento(@RequestBody Medicamento medicamento) {
         return medicamentoService.guardar(medicamento);
     }
 
-    //Función para actualiizar un medicamento (solo admin)
     @PutMapping("/{id}")
     public void actualizarMedicamento(@PathVariable Long id,@RequestBody Medicamento medicamento) {
         Medicamento existente = medicamentoService.obtenerPorId(id);
@@ -63,7 +58,6 @@ public class MedicamentoController {
         medicamentoService.guardar(existente);
     }
 
-    //Función para eliminar un medicamento (solo admin)
     @DeleteMapping("/{id}")
     public void eliminarMedicamento(@PathVariable Long id) {
         Medicamento existente = medicamentoService.obtenerPorId(id);

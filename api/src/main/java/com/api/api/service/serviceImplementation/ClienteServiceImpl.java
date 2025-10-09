@@ -1,25 +1,18 @@
 package com.api.api.service.serviceImplementation;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.api.api.model.Cliente;
 import com.api.api.model.Mascota;
 import com.api.api.repository.ClienteRepository;
 import com.api.api.service.serviceInterface.ClienteService;
-//import com.api.api.service.serviceInterface.MascotaService;
-
 
 @Service
 public class ClienteServiceImpl implements ClienteService {
 
     @Autowired
     private ClienteRepository clienteRepository;
-
-    //@Autowired
-    //private MascotaService mascotaService;
 
     @Override
     public List<Cliente> obtenerTodos() {

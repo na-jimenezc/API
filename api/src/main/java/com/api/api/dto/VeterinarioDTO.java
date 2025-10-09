@@ -9,7 +9,8 @@ public class VeterinarioDTO {
     private int activo;
     private int consultas;
 
-    public VeterinarioDTO() {}
+    public VeterinarioDTO() {
+    }
 
     public VeterinarioDTO(Long id, String nombre, String especialidad, String nombreUsuario, 
                          String imagen, int activo, int consultas) {
@@ -77,6 +78,4 @@ public class VeterinarioDTO {
     public void setConsultas(int consultas) {
         this.consultas = consultas;
     }
-
-
 }

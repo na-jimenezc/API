@@ -2,7 +2,6 @@ package com.api.api.service.serviceInterface;
 
 import java.time.LocalDate;
 import java.util.List;
-
 import com.api.api.model.Tratamiento;
 
 public interface TratamientoService {

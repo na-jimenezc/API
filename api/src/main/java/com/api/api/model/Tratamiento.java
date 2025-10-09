@@ -1,9 +1,7 @@
 package com.api.api.model;
 
 import java.time.LocalDate;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -94,6 +92,5 @@ public class Tratamiento {
 
     public void setVeterinario(Veterinario veterinario) {
         this.veterinario = veterinario;
-    }
-    
+    }   
 }

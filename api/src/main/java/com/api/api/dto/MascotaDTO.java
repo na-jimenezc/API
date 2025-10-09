@@ -29,8 +29,8 @@ public class MascotaDTO {
         this.estado = estado;
     }
 
-    public MascotaDTO() {} 
-
+    public MascotaDTO() {
+    } 
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

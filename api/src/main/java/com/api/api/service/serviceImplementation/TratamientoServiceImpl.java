@@ -2,10 +2,8 @@ package com.api.api.service.serviceImplementation;
 
 import java.time.LocalDate;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.api.api.model.Mascota;
 import com.api.api.model.Medicamento;
 import com.api.api.model.Tratamiento;
@@ -52,11 +50,10 @@ public class TratamientoServiceImpl implements TratamientoService {
         return tratamientoRepository.save(tratamiento);
     }
 
-
-        @Override
-        public List<Tratamiento> obtenerTratamientosPorMascota(Long mascotaId) {
+    @Override
+    public List<Tratamiento> obtenerTratamientosPorMascota(Long mascotaId) {
         return tratamientoRepository.findByMascotaIdWithRelations(mascotaId);
- }
+    }
 
     @Override
     public Tratamiento administrarMedicamento(Long idMascota, Long idMedicamento, Long idVeterinario, int cantidadUsada) {

@@ -2,7 +2,6 @@ package com.api.api.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -88,5 +87,4 @@ public class Cliente {
         public void setMascotas(List<Mascota> mascotas) {
         this.mascotas = mascotas;
         }
-
 }

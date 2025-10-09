@@ -8,7 +8,8 @@ public class MedicamentoDTO {
     private int unidadesDisponibles;
     private int unidadesVendidas;
 
-    public MedicamentoDTO() {}
+    public MedicamentoDTO() {
+    }
 
     public MedicamentoDTO(Long id, String nombre, float precioCompra, float precioVenta, 
                          int unidadesDisponibles, int unidadesVendidas) {

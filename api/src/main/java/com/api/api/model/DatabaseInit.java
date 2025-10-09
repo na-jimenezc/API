@@ -5,19 +5,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-
 import com.api.api.repository.AdministradorRepository;
 import com.api.api.repository.ClienteRepository;
 import com.api.api.repository.MascotaRepository;
 import com.api.api.repository.MedicamentoRepository;
 import com.api.api.repository.TratamientoRepository;
 import com.api.api.repository.VeterinarioRepository;
-
 import jakarta.transaction.Transactional;
+
 @Component
 @Transactional
 public class DatabaseInit implements ApplicationRunner {
@@ -256,11 +254,8 @@ public class DatabaseInit implements ApplicationRunner {
                 estado,
                 activo
             );
-
             m.setCliente(clientes.get(random.nextInt(clientes.size())));
             mascotas.add(m);
         }
-
         mascotaRepository.saveAll(mascotas);
-    
 }}

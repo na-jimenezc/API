@@ -1,7 +1,6 @@
 package com.api.api.dto;
 
 import java.util.List;
-
 import org.springframework.data.domain.Page;
 
 public class PageResponseDTO<T> {
@@ -23,7 +22,8 @@ public class PageResponseDTO<T> {
         this.last = page.isLast();
     }
 
-    public PageResponseDTO() {}
+    public PageResponseDTO() {
+    }
 
     public List<T> getContent() { 
         return content; 

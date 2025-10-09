@@ -2,9 +2,7 @@ package com.api.api.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,7 +17,6 @@ public class Mascota {
     @Id
     @GeneratedValue
     private Long id;
-
     private String nombre;
     private String raza;
     private Integer edad;
@@ -160,5 +157,4 @@ public class Mascota {
     public void setActivo(Boolean activo) {
         this.activo = activo;
     }
-
 }

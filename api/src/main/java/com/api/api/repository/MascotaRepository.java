@@ -1,7 +1,6 @@
 package com.api.api.repository;
 
 import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -11,19 +10,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.api.api.model.Mascota;
-
 
 @Repository
 public interface MascotaRepository extends JpaRepository<Mascota, Long> {
-
     @Query("SELECT DISTINCT m FROM Mascota m " +
        "JOIN m.tratamientos t " +
        "JOIN t.veterinario v " +
        "WHERE v.id = :veterinarioId")
        List<Mascota> findByVeterinarioIdIncluyendoTratamientos(@Param("veterinarioId") Long veterinarioId);
-
 
     @Query("SELECT m FROM Mascota m WHERE m.cliente.id = :clienteId")
        List<Mascota> findByClienteId(@Param("clienteId") Long clienteId);
@@ -35,5 +30,4 @@ public interface MascotaRepository extends JpaRepository<Mascota, Long> {
    @EntityGraph(attributePaths = {"cliente"})
    @Override
    Page<Mascota> findAll(Pageable pageable);
-
 }

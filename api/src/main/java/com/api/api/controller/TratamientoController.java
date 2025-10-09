@@ -2,7 +2,6 @@ package com.api.api.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.api.api.dto.MedicamentoDTO;
 import com.api.api.dto.TratamientoDTO;
 import com.api.api.dto.VeterinarioDTO;
@@ -38,7 +36,6 @@ public class TratamientoController {
     @Autowired
     private VeterinarioService veterinarioService;
 
-    //Función Obtener todos los tratamientos de una mascota con información completa
     @GetMapping("/{mascotaId}")
     public List<TratamientoDTO> obtenerTratamientos(@PathVariable Long mascotaId) {
         List<Tratamiento> tratamientos = tratamientoService.obtenerTratamientosPorMascota(mascotaId);
@@ -48,19 +45,16 @@ public class TratamientoController {
                 .collect(Collectors.toList());
     }
 
-    //Método auxiliar para convertir Tratamiento a TratamientoDTO
     private TratamientoDTO convertirATratamientoDTO(Tratamiento tratamiento) {
         TratamientoDTO dto = new TratamientoDTO();
         dto.setId(tratamiento.getId());
         
-        //Convertir LocalDate a String (formato YYYY-MM-DD)
         if (tratamiento.getFecha() != null) {
             dto.setFecha(tratamiento.getFecha().toString()); 
         }
         
         dto.setCantidadUsada(tratamiento.getCantidadUsada());
         
-        //Convertir Medicamento a MedicamentoDTO
         if (tratamiento.getMedicamento() != null) {
             MedicamentoDTO medicamentoDTO = new MedicamentoDTO(
                 tratamiento.getMedicamento().getId(),
@@ -73,7 +67,6 @@ public class TratamientoController {
             dto.setMedicamento(medicamentoDTO);
         }
         
-        //Convertir Veterinario a VeterinarioDTO
         if (tratamiento.getVeterinario() != null) {
             VeterinarioDTO veterinarioDTO = new VeterinarioDTO(
                 tratamiento.getVeterinario().getId(),
@@ -90,7 +83,6 @@ public class TratamientoController {
         return dto;
     }
 
-    //Función para administrar un medicamento a una mascota
     @PostMapping("/administrar")
     public Tratamiento administrarMedicamento(@RequestParam Long idMascota,
                                               @RequestParam Long idMedicamento,

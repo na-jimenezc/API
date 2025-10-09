@@ -1,10 +1,8 @@
 package com.api.api.service.serviceInterface;
 
 import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
 import com.api.api.model.Mascota;
 
 public interface MascotaService {
@@ -22,8 +20,7 @@ public interface MascotaService {
                           Boolean activo);
     List<Mascota> obtenerMascotasPorClienteId(Long clienteId);
     void desactivarMascota(Long id);
+
     public Mascota registrarMascota(Mascota mascota);
-
     public Page<Mascota> obtenerMascotasPaginadas(Pageable pageable);
-
 }

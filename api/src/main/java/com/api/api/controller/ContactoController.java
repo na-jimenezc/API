@@ -2,7 +2,6 @@ package com.api.api.controller;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "http://localhost:4200")
 public class ContactoController {
 
-    //Función para mostrar el formulario de contacto (PASAR ESTO A ANGULAR)
     @GetMapping
     public ResponseEntity<Map<String, String>> mostrarMensaje(@RequestParam(value = "ok", required = false) String ok) {
         Map<String, String> response = new HashMap<>();
@@ -28,7 +26,6 @@ public class ContactoController {
         return ResponseEntity.ok(response);
     }
 
-    //Función para procesar el formulario de contacto
     @PostMapping
     public ResponseEntity<Map<String, String>> procesarFormulario(
             @RequestParam String nombre,
@@ -37,7 +34,6 @@ public class ContactoController {
             @RequestParam String asunto,
             @RequestParam String mensaje) {
 
-        //PENDIENTE: AGREGAR LA LÓGICA PARA CONECTARSE A UN SERVICIO Y MANDAR CORREO CON CONFIRMACIÓN
         Map<String, String> response = new HashMap<>();
         response.put("status", "ok");
         response.put("mensaje", "¡Gracias! Recibimos tu mensaje y te contactaremos pronto.");
