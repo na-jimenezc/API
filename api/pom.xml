@@ -67,9 +67,25 @@
 			<version>2.1.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>5.2.5</version>
+		</dependency>
 	</dependencies>
 
 	<build>
+		<resources>
+			<resource>
+			<directory>src/main/resources</directory>
+			<filtering>false</filtering>
+			<includes>
+				<include>**/*.xlsx</include>
+				<include>**/*.properties</include>
+				<include>**/*.yml</include>
+			</includes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -97,5 +113,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
