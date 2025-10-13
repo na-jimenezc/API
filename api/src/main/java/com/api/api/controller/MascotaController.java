@@ -33,58 +33,79 @@ public class MascotaController {
     @Autowired
     private ClienteService clienteService;
 
+    //GET : Obtener todas las mascotas 
+    // http://localhost:8080/api/mascotas
     @GetMapping
-    public List<Mascota> listarMascotas() {
-        return (mascotaService.obtenerTodasMascotas());
+    public ResponseEntity<List<Mascota>> listarMascotas() {
+        
+        List<Mascota> lista = mascotaService.obtenerTodasMascotas();
+
+        ResponseEntity <List<Mascota>> responde = new ResponseEntity<>(lista, HttpStatus.OK);
+        return responde;
+
     }
 
-     @GetMapping("/todas")
-    public List<MascotaDTO> listarTodasMascotas() {
+    //GET : Obtener todas las mascotas pero en DTO para el Front
+    // http://localhost:8080/api/mascotas
+    @GetMapping("/todas")
+    public ResponseEntity<List<MascotaDTO>> listarTodasMascotas() {
         List<Mascota> mascotas = mascotaService.obtenerTodasMascotas();
-        
-        return mascotas.stream()
-                .map(mascota -> new MascotaDTO(
-                    mascota.getId(),
-                    mascota.getNombre(),
-                    mascota.getRaza(),
-                    mascota.getEdad(),
-                    mascota.getTipo(),
-                    mascota.getEnfermedad(),
-                    mascota.getPeso(),
-                    mascota.getFotoURL(),
-                    mascota.getActivo(),
-                    mascota.getCliente() != null ? mascota.getCliente().getId() : null,
-                    mascota.getEstado()
+
+        List<MascotaDTO> respuesta = mascotas.stream()
+                .map(m -> new MascotaDTO(
+                        m.getId(),
+                        m.getNombre(),
+                        m.getRaza(),
+                        m.getEdad(),
+                        m.getTipo(),
+                        m.getEnfermedad(),
+                        m.getPeso(),
+                        m.getFotoURL(),
+                        m.getActivo(),
+                        m.getCliente() != null ? m.getCliente().getId() : null,
+                        m.getEstado()
                 ))
                 .collect(Collectors.toList());
+
+        return ResponseEntity.ok(respuesta);
     }
+
+    //GET : Obtener todas la mascota por el id
+    // http://localhost:8080/api/mascotas/1
 
     @GetMapping("/{id}")
-    public MascotaDTO verDetalleMascota(@PathVariable Long id) {
+    public ResponseEntity<?> verDetalleMascota(@PathVariable Long id) {
         Mascota mascota = mascotaService.obtenerMascotaPorId(id);
+
         if (mascota == null) {
-            return null;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Mascota no encontrada con ID: " + id);
         }
-        return new MascotaDTO(
-            mascota.getId(),
-            mascota.getNombre(),
-            mascota.getRaza(),
-            mascota.getEdad(),
-            mascota.getTipo(),
-            mascota.getEnfermedad(),
-            mascota.getPeso(),
-            mascota.getFotoURL(),
-            mascota.getActivo(),
-            mascota.getCliente() != null ? mascota.getCliente().getId() : null,
-            mascota.getEstado()
+
+        MascotaDTO dto = new MascotaDTO(
+                mascota.getId(),
+                mascota.getNombre(),
+                mascota.getRaza(),
+                mascota.getEdad(),
+                mascota.getTipo(),
+                mascota.getEnfermedad(),
+                mascota.getPeso(),
+                mascota.getFotoURL(),
+                mascota.getActivo(),
+                mascota.getCliente() != null ? mascota.getCliente().getId() : null,
+                mascota.getEstado()
         );
+
+        return ResponseEntity.ok(dto);
     }
 
+    //POST : Crear una nueva mascota
     @PostMapping
-    public MascotaDTO crearMascota(@RequestBody MascotaCreateDTO dto) {
+    public ResponseEntity<?> crearMascota(@RequestBody MascotaCreateDTO dto) {
         Cliente cliente = clienteService.obtenerClientePorId(dto.getClienteId());
-        if (cliente == null) {
-            throw new RuntimeException("Cliente no encontrado");
+
+        if(cliente==null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente no encontrado con ID: " + dto.getClienteId());
         }
 
         Mascota mascota = new Mascota();
@@ -101,26 +122,13 @@ public class MascotaController {
 
         Mascota guardada = mascotaService.registrarMascota(mascota);
 
-        return new MascotaDTO(
-            guardada.getId(),
-            guardada.getNombre(),
-            guardada.getRaza(),
-            guardada.getEdad(),
-            guardada.getTipo(),
-            guardada.getEnfermedad(),
-            guardada.getPeso(),
-            guardada.getFotoURL(),
-            guardada.getActivo(),
-            guardada.getCliente().getId(),
-            guardada.getEstado()
-        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(guardada);
     }
 
+    //PUT : Actualizar una mascota
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarMascota(
-            @PathVariable Long id,
-            @RequestBody MascotaUpdateDTO dto) { 
-        try {
+    public ResponseEntity<?> actualizarMascota(@PathVariable Long id,@RequestBody MascotaUpdateDTO dto) {
+        try{
             Mascota actualizada = mascotaService.actualizarMascota(
                     id,
                     dto.getNombre(),
@@ -128,29 +136,29 @@ public class MascotaController {
                     dto.getRaza(),
                     dto.getEnfermedad(),
                     dto.getFotoURL(),
-                    dto.isActivo()
-            );
-        if (actualizada == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Mascota no encontrada con ID: " + id);
-        }return ResponseEntity.ok(actualizada);
+                    dto.isActivo());
+                    return ResponseEntity.ok(actualizada);
 
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error al actualizar mascota: " + e.getMessage());
+        }catch(RuntimeException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Mascota no encontrada con ID: " + id);
+        }catch(Exception e){return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar la mascota: " + e.getMessage());
         }
     }
 
+    //DELETE : Desactivar una mascota
     @DeleteMapping("/{id}/desactivar")
     public void desactivarMascota(@PathVariable Long id) {
         mascotaService.desactivarMascota(id);
     }
 
+    //DELETE : Eliminar  una mascota
     @DeleteMapping("/{id}")
     public void eliminarMascota(@PathVariable Long id) {
         mascotaService.eliminarMascotaHard(id);
     }
 
+    //GET : Obtener las mascotas por cliente
+    // http://localhost:8080/api/mascotas/cliente/{clienteId}
     @GetMapping("/cliente/{clienteId}")
     public List<Mascota> listarPorCliente(@PathVariable Long clienteId) {
         return mascotaService.obtenerMascotasPorClienteId(clienteId);
