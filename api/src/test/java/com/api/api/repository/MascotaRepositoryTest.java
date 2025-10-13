@@ -97,6 +97,7 @@ public class MascotaRepositoryTest {
 
     }
 
+    //PRUEBA #1
     //Probar ingresar una mascota
     @Test
     // [Lo que se prueba]_[la función]_[lo que devuelve]
@@ -112,6 +113,7 @@ public class MascotaRepositoryTest {
         Assertions.assertThat(mascotaGuardada).isNotNull();
     }
 
+    //PRUEBA #2
     //Probar que se estén encontrando todas las mascotas
     @Test
     public void MascotaRepository_FindAll_NotEmptyList(){
@@ -124,6 +126,7 @@ public class MascotaRepositoryTest {
 
     }
 
+    //PRUEBA #3
     //Probar fuera de índices
     @Test 
     public void MascotaRepository_findById_FindWrongIndex(){
@@ -134,6 +137,7 @@ public class MascotaRepositoryTest {
         Assertions.assertThat(mascota).isEmpty();
     }
 
+    //PRUEBA #4
     //Probar delete
     @Test 
     public void MascotaRepository_deleteById_EmptyMascota(){
@@ -145,6 +149,7 @@ public class MascotaRepositoryTest {
 
     }
 
+    //PRUEBA #5
     //Probar queries personalizadas
     @Test
     public void MascotaRepository_findByVeterinarioIdIncluyendoTratamientos_Mascotas() {
@@ -158,6 +163,8 @@ public class MascotaRepositoryTest {
         Assertions.assertThat(resultado.get(0).getNombre()).isEqualTo("Firulais");
     }
 
+    //PRUEBA #6
+    //Probar que se encuentren las mascotas del cliente
     @Test
     public void MascotaRepository_findByClienteId_MascotasDelCliente() {
 
@@ -171,6 +178,8 @@ public class MascotaRepositoryTest {
         Assertions.assertThat(resultado.get(0).getCliente().getNombre()).isEqualTo("Carlos Ruiz");
     }
 
+    //PRUEBA #7
+    //Probar quitar mascotas por id del cliente
     @Test
     @Transactional
     public void MascotaRepository_deleteByClienteId_RemovesMascotasDelCliente() {

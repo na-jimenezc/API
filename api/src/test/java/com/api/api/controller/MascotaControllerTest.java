@@ -46,6 +46,7 @@ public class MascotaControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    //PRUEBA #15
     //Test para obtener las mascotas
     @Test
     public void MascotaController_ListarMascotas_listaMascotas() throws Exception {
@@ -63,6 +64,7 @@ public class MascotaControllerTest {
                 .andExpect(jsonPath("$[1].nombre").value("Michi"));
     }
 
+    //PRUEBA #16
     //Test oara crear una nueva mascota con el DTO
     @Test
     public void MascotaController_CrearMascota_Mascota() throws Exception {
@@ -93,6 +95,7 @@ public class MascotaControllerTest {
                 .andExpect(status().isCreated()).andExpect(jsonPath("$.id").value(10)).andExpect(jsonPath("$.nombre").value("Firulais"));
     }
 
+    //PRUEBA #17
     //Test para ver una mascota por su id
     @Test
     public void MascotaController_verDetalleMascota_MascotaId() throws Exception {
@@ -104,6 +107,7 @@ public class MascotaControllerTest {
         mockMvc.perform(get("/api/mascotas/1")).andExpect(status().isOk()).andExpect(jsonPath("$.nombre").value("Firulais")).andExpect(jsonPath("$.tipo").value("Perro"));
     }
 
+    //PRUEBA #18
     //Test para actualizar una mascota
     @Test
     public void MascotaController_actualizarMascota_Mascota() throws Exception {
@@ -127,6 +131,7 @@ public class MascotaControllerTest {
                 .andExpect(status().isOk()).andExpect(jsonPath("$.nombre").value("Firulais Modificado"));
     }
 
+    //PRUEBA #19
     //Test para eliminar una mascota
     @Test
     public void MascotaController_eliminarMascota_200() throws Exception {
@@ -134,6 +139,7 @@ public class MascotaControllerTest {
         mockMvc.perform(delete("/api/mascotas/1")).andExpect(status().isOk());
     }
 
+    //PRUEBA #20
     //Test para desactivar una mascota
     @Test
     public void MascotaController_desactivarMascota_200() throws Exception {

@@ -41,6 +41,7 @@ public class MascotaServiceTestMock {
 
     //when().thenReturn() "Cuando algo ocurra se retorna algo"
 
+    //PRUEBA #8
     //Prueba para obtener las mascotas por el servicio
     @Test
     public void MascotaService_obtenerMascotas_Mascotas() {
@@ -63,6 +64,7 @@ public class MascotaServiceTestMock {
         Assertions.assertThat(resultado.get(0).getNombre()).isEqualTo("Firulais");
     }
 
+    //PRUEBA #9
     //Prueba para tener la mascota por id
     @Test
     public void MascotaService_obtenerMascotaPorId_Mascota() {
@@ -76,6 +78,7 @@ public class MascotaServiceTestMock {
         Assertions.assertThat(resultado.getNombre()).isEqualTo("Firulais");
     }
 
+    //PRUEBA #10
     //Prueba para guardar una nueva mascota
     @Test
     public void MascotaService_guardarMascota_Mascota() {
@@ -89,6 +92,7 @@ public class MascotaServiceTestMock {
         Assertions.assertThat(resultado.getNombre()).isEqualTo("Luna");
     }
 
+    //PRUEBA #11
     //Prueba para poner a una mascota inactiva
     @Test
     public void MascotaService_eliminarMascota_ActivoFalso() {
@@ -102,6 +106,7 @@ public class MascotaServiceTestMock {
         Assertions.assertThat(mascota.getActivo()).isFalse();
     }
 
+    //PRUEBA #12
     //Prueba para actualizar una mascota
     @Test
     public void MascotaService_actualizarMascota_ActualizaCampos() {
@@ -129,6 +134,7 @@ public class MascotaServiceTestMock {
         Assertions.assertThat(mascotaActualizada.getActivo()).isFalse();
     }
 
+    //PRUEBA #13
     //Prueba para actualizar una mascota
     @Test
     public void MascotaService_registrarMascota_MascotaActiva() {
@@ -140,6 +146,7 @@ public class MascotaServiceTestMock {
         Assertions.assertThat(resultado.getActivo()).isTrue();
     }
 
+    //PRUEBA #14
     //Prueba para ELIMINAR totalmente una mascota (esto no está activo dentro de la lógica de negocio pero al igual
     //lo voy a dejar)
     @Test
