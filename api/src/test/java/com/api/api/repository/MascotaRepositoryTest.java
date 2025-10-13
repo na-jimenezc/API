@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.api.api.model.Cliente;
 import com.api.api.model.Mascota;
@@ -59,7 +60,7 @@ public class MascotaRepositoryTest {
     private MedicamentoRepository medicamentosRepository;
 
     @BeforeEach
-    void setUp(){
+    void init(){
         Mascota mascota1 = new Mascota("Firulais", "Criollo", 3, "Perro", "Ninguna", 25.4, "/assets/images/firulais.jpg", "Sano", true);      
         Mascota mascota2 = new Mascota("Roberto", "Persa", 2, "Gato", "Ninguna", 4.8, "/assets/images/roberto.jpeg", "Sano", true);
         Mascota mascota3 = new Mascota("Rocky", "Criollo", 5, "Perro", "Patita torcida", 30.2, "/assets/images/rocky.jpeg", "Enfermo", false);
@@ -146,7 +147,7 @@ public class MascotaRepositoryTest {
 
     //Probar queries personalizadas
     @Test
-    public void MascotaRepository_findByVeterinarioIdIncluyendoTratamientos_ReturnsMascotas() {
+    public void MascotaRepository_findByVeterinarioIdIncluyendoTratamientos_Mascotas() {
 
         //Se pone el veterinario y se buscan sus tratamientos por el perrito
         Long idVet = veterinarioRepository.findAll().get(0).getId();
@@ -158,7 +159,7 @@ public class MascotaRepositoryTest {
     }
 
     @Test
-    public void MascotaRepository_findByClienteId_ReturnsMascotasDelCliente() {
+    public void MascotaRepository_findByClienteId_MascotasDelCliente() {
 
         //Se obtiene el cliente y se revisa que tenga los 3 animalitos asociados por el setUp
         Long idCliente = clienteRepository.findAll().get(0).getId();
@@ -170,5 +171,19 @@ public class MascotaRepositoryTest {
         Assertions.assertThat(resultado.get(0).getCliente().getNombre()).isEqualTo("Carlos Ruiz");
     }
 
+    @Test
+    @Transactional
+    public void MascotaRepository_deleteByClienteId_RemovesMascotasDelCliente() {
+        Long idCliente = clienteRepository.findAll().get(0).getId();
 
+        //Se borran los tratamientos asociados para que no llore por la relación entre tratamiento y mascota
+        List<Mascota> mascotasCliente = mascotaRepository.findByClienteId(idCliente);
+        for (Mascota m : mascotasCliente) {
+            tratamientoRepository.deleteAll(tratamientoRepository.findByMascotaId(m.getId()));
+        }
+        mascotaRepository.deleteByClienteId(idCliente);
+
+        List<Mascota> resultado = mascotaRepository.findByClienteId(idCliente);
+        Assertions.assertThat(resultado).isEmpty();
+    }
 }
