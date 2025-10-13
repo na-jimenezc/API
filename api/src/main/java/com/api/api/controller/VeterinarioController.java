@@ -1,6 +1,5 @@
 package com.api.api.controller;
 
-import com.api.api.dto.VeterinarioLoginRequest;
 import com.api.api.model.Veterinario;
 import com.api.api.service.serviceInterface.VeterinarioService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,5 +1,6 @@
 package com.api.api.controller;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.Collections;
-import java.util.List;
+
 import com.api.api.model.Cliente;
 import com.api.api.model.Mascota;
 import com.api.api.service.serviceInterface.ClienteService;
@@ -27,17 +27,22 @@ public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
+    // http://localhost:8080/api/clientes
     @GetMapping
     public List<Cliente> obtenerClientes() {
         return clienteService.obtenerTodos();
     }
 
+    // http://localhost:8080/api/clientes/1
     @GetMapping("/{id}")
     public Cliente obtenerClientePorId(@PathVariable Long id) {
         Cliente cliente = clienteService.obtenerClientePorId(id);
         return (cliente != null) ? cliente : null;
     }
 
+
+    // http://localhost:8080/api/clientes
+    
     @PostMapping
     public Cliente crearCliente(@RequestBody Cliente cliente) {
         if (clienteService.existeClientePorCedula(cliente.getCedula())) {
@@ -71,6 +76,9 @@ public class ClienteController {
         clienteService.eliminarClienteHard(id);
     }
 
+
+    // http://localhost:8080/api/clientes/{id}/mascotas
+    // http://localhost:8080/api/clientes/1/mascotas
     @GetMapping("/{id}/mascotas")
     public ResponseEntity<List<Mascota>> obtenerMascotasPorCliente(@PathVariable Long id) {
         List<Mascota> mascotas = clienteService.obtenerMascotasPorClienteId(id);
@@ -80,6 +88,9 @@ public class ClienteController {
         return ResponseEntity.ok(mascotas);
     }
 
+
+    // http://localhost:8080/api/clientes/cedula/{cedula}
+    // http://localhost:8080/api/clientes/cedula/1234567890
     @GetMapping("/cedula/{cedula}")
     public Cliente obtenerPorCedula(@PathVariable String cedula) {
         Cliente cliente = clienteService.obtenerPorCedula(cedula);

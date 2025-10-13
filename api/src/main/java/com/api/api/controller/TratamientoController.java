@@ -27,14 +27,14 @@ public class TratamientoController {
     @Autowired
     private TratamientoService tratamientoService;
 
-    @Autowired
-    private MascotaService mascotaService;
+    //@Autowired
+    //private MascotaService mascotaService;
 
-    @Autowired
-    private MedicamentoService medicamentoService;
+    // @Autowired
+    // private MedicamentoService medicamentoService;
 
-    @Autowired
-    private VeterinarioService veterinarioService;
+    // @Autowired
+    // private VeterinarioService veterinarioService;*/
 
     @GetMapping("/{mascotaId}")
     public List<TratamientoDTO> obtenerTratamientos(@PathVariable Long mascotaId) {
