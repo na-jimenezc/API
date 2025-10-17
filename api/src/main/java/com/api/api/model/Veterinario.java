@@ -2,9 +2,11 @@ package com.api.api.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -32,7 +34,8 @@ public class Veterinario {
     @JsonBackReference
     private List<Administrador> administradores = new ArrayList<>();
     
-    @OneToMany(mappedBy = "veterinario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    //NOTA: SI NO SE QUIERE QUITAR A SUS TRATAMIENTOS AL ELIMINAR UN VETERINARIO, QUITAR orphanRemoval = true
+    @OneToMany(mappedBy = "veterinario", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
     private List<Tratamiento> tratamientos = new ArrayList<>();
 

@@ -42,7 +42,6 @@ public class ClienteController {
 
 
     // http://localhost:8080/api/clientes
-    
     @PostMapping
     public Cliente crearCliente(@RequestBody Cliente cliente) {
         if (clienteService.existeClientePorCedula(cliente.getCedula())) {

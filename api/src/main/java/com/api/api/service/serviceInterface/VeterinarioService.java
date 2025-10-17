@@ -1,6 +1,7 @@
 package com.api.api.service.serviceInterface;
 
 import java.util.List;
+
 import com.api.api.model.Veterinario;
 
 public interface VeterinarioService {
@@ -10,4 +11,5 @@ public interface VeterinarioService {
     Veterinario obtenerVeterinarioPorId(Long id);
     Veterinario guardarVeterinario(Veterinario veterinario);
     void eliminarVeterinario(Long id);
+    Veterinario actualizarEstado(Long id, int estado);
 }
