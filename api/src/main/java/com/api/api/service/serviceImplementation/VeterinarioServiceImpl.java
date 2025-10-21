@@ -9,17 +9,15 @@ import com.api.api.model.Tratamiento;
 import com.api.api.model.Veterinario;
 import com.api.api.repository.VeterinarioRepository;
 import com.api.api.service.serviceInterface.VeterinarioService;
+import lombok.RequiredArgsConstructor;
 
 import jakarta.transaction.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class VeterinarioServiceImpl implements VeterinarioService {
 
     private final VeterinarioRepository veterinarioRepository;
-
-    public VeterinarioServiceImpl(VeterinarioRepository veterinarioRepository) {
-        this.veterinarioRepository = veterinarioRepository;
-    }
 
     //Obtrener todos los veterinarios
     @Override
@@ -86,5 +84,23 @@ public class VeterinarioServiceImpl implements VeterinarioService {
             return veterinarioRepository.save(veterinario);
         }
         return null;
+    }
+
+    @Override
+    public List<Veterinario> buscar(String cedula, String nombre, String especialidad) {
+        boolean hayFiltro =
+            (cedula != null && !cedula.isBlank()) ||
+            (nombre != null && !nombre.isBlank()) ||
+            (especialidad != null && !especialidad.isBlank());
+
+        if (!hayFiltro) {
+            return obtenerTodos(); // mismo comportamiento de siempre
+        }
+
+        String c = (cedula == null || cedula.isBlank()) ? null : cedula.trim();
+        String n = (nombre == null || nombre.isBlank()) ? null : nombre.trim();
+        String e = (especialidad == null || especialidad.isBlank()) ? null : especialidad.trim();
+
+        return veterinarioRepository.buscar(c, n, e);
     }
 }

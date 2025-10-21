@@ -22,9 +22,14 @@ import com.api.api.dto.VeterinarioUpdateDTO;
 import com.api.api.model.Veterinario;
 import com.api.api.service.serviceInterface.VeterinarioService;
 
+import org.springframework.web.bind.annotation.*;
+import com.api.api.service.serviceInterface.VeterinarioService;
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api/veterinarios")
+@RequiredArgsConstructor
 public class VeterinarioController {
 
     @Autowired
@@ -49,10 +54,15 @@ public class VeterinarioController {
     }
 
     // http://localhost:8080/api/veterinarios
-    /*Obtener a todos los veterinarios */
+    /* Obtener a todos los veterinarios (o filtrados si vienen query params) */
     @GetMapping
-    public List<Veterinario> obtenerTodos() {
-        return veterinarioService.obtenerTodos();
+    public ResponseEntity<List<Veterinario>> obtenerTodos(
+            @RequestParam(required = false) String cedula,
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) String especialidad) {
+
+        List<Veterinario> data = veterinarioService.buscar(cedula, nombre, especialidad);
+        return ResponseEntity.ok(data);
     }
 
     // http://localhost:8080/api/veterinarios/activos
@@ -173,6 +183,4 @@ public class VeterinarioController {
             return ResponseEntity.status(500).body("Error al actualizar el estado: " + e.getMessage());
         }
     }
-
-    
 }

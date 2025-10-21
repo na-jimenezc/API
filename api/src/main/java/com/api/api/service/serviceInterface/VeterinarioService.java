@@ -12,4 +12,5 @@ public interface VeterinarioService {
     Veterinario guardarVeterinario(Veterinario veterinario);
     void eliminarVeterinario(Long id);
     Veterinario actualizarEstado(Long id, int estado);
+    List<Veterinario> buscar(String cedula, String nombre, String especialidad);
 }
