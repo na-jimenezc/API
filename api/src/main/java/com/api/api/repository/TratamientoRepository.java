@@ -26,4 +26,10 @@ public interface TratamientoRepository extends JpaRepository<Tratamiento, Long> 
            "WHERE t.mascota.id = :mascotaId " +
            "ORDER BY t.fecha DESC")
     List<Tratamiento> findByMascotaIdWithRelations(@Param("mascotaId") Long mascotaId);
+
+    @Query("SELECT t FROM Tratamiento t " +
+       "LEFT JOIN FETCH t.medicamento " +
+       "LEFT JOIN FETCH t.veterinario " +
+       "LEFT JOIN FETCH t.mascota")
+    List<Tratamiento> findAllWithRelations();
 }
