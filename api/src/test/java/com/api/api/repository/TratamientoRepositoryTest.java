@@ -110,7 +110,7 @@ public class TratamientoRepositoryTest {
         //Ejecutar la eliminación
         tratamientoRepository.deleteByClienteId(idCliente);
 
-        //Verificar después
+        //Assert de que no haya nada
         List<Tratamiento> despues = mascotas.stream()
                 .flatMap(m -> tratamientoRepository.findByMascotaId(m.getId()).stream())
                 .toList();
