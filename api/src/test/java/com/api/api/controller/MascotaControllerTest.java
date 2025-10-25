@@ -2,26 +2,34 @@ package com.api.api.controller;
 
 import java.util.List;
 
-import static org.mockito.Mockito.when;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import org.mockito.Mockito;
+import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.api.api.dto.MascotaCreateDTO;
+import com.api.api.dto.MascotaUpdateDTO;
 import com.api.api.model.Cliente;
 import com.api.api.model.Mascota;
-import com.api.api.service.serviceInterface.MascotaService;
-import com.api.api.dto.MascotaUpdateDTO;
 import com.api.api.service.serviceInterface.ClienteService;
+import com.api.api.service.serviceInterface.MascotaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.mockito.Mockito;
-import static org.mockito.ArgumentMatchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 //PRUEBAS UNITARIAS -> COMPONENTE ESPECÍFICO
@@ -39,7 +47,7 @@ public class MascotaControllerTest {
     @MockBean //Crea espacio de memoria
     private MascotaService mascotaService;
 
- @SuppressWarnings("removal")
+    @SuppressWarnings("removal")
     @MockBean //Crea espacio de memoria
     private ClienteService clienteService;
 

@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -149,8 +150,15 @@ public class MascotaRepositoryTest {
 
     }
 
-    //PRUEBA #5
+    //PRUEBA #5 - PRUEBA #1 DE LAS QUERIES PERSONALIZADAS
     //Probar queries personalizadas
+
+    /*@Query("SELECT DISTINCT m FROM Mascota m " +
+       "JOIN m.tratamientos t " +
+       "JOIN t.veterinario v " +
+       "WHERE v.id = :veterinarioId")
+    List<Mascota> findByVeterinarioIdIncluyendoTratamientos(@Param("veterinarioId") Long veterinarioId);
+    */
     @Test
     public void MascotaRepository_findByVeterinarioIdIncluyendoTratamientos_Mascotas() {
 
@@ -163,8 +171,10 @@ public class MascotaRepositoryTest {
         Assertions.assertThat(resultado.get(0).getNombre()).isEqualTo("Firulais");
     }
 
-    //PRUEBA #6
+    //PRUEBA #6 - PRUEBA #2 DE LAS QUERIES PERSONALIZADAS
     //Probar que se encuentren las mascotas del cliente
+    /*@Query("SELECT m FROM Mascota m WHERE m.cliente.id = :clienteId")
+    List<Mascota> findByClienteId(@Param("clienteId") Long clienteId); */
     @Test
     public void MascotaRepository_findByClienteId_MascotasDelCliente() {
 
@@ -194,5 +204,35 @@ public class MascotaRepositoryTest {
 
         List<Mascota> resultado = mascotaRepository.findByClienteId(idCliente);
         Assertions.assertThat(resultado).isEmpty();
+    }
+
+    //PRUEBA 8
+    //Probar actualización 
+    @Test
+    @Order(5)
+    public void MascotaRepository_updateById_UpdateMascota() {
+        //Se crea la mascota para actualizar y se guarda
+        Mascota mascota = new Mascota("Rocky", "Labrador", 3, "Perro", 
+        "Ninguna", 6.5, null, "Sano", true);
+        Mascota mascotaGuardada = mascotaRepository.save(mascota);
+
+        //Se cambian los datos
+        mascotaGuardada.setEdad(4);
+        mascotaGuardada.setEstado("Enfermo");
+        mascotaGuardada.setPeso(7.0);
+        mascotaGuardada.setEnfermedad("COVID");
+        mascotaGuardada.setFotoURL("/assets/images/rockyEditado.jpeg");
+        mascotaGuardada.setActivo(false);
+
+        //Se guarda la actualización
+        Mascota mascotaActualizada = mascotaRepository.save(mascotaGuardada);
+
+        //Se hace el assert
+        Assertions.assertThat(mascotaActualizada.getEdad()).isEqualTo(4);
+        Assertions.assertThat(mascotaActualizada.getEstado()).isEqualTo("Enfermo");
+        Assertions.assertThat(mascotaActualizada.getPeso()).isEqualTo(7.0);
+        Assertions.assertThat(mascotaActualizada.getEnfermedad()).isEqualTo("COVID");
+        Assertions.assertThat(mascotaActualizada.getFotoURL()).isEqualTo("/assets/images/rockyEditado.jpeg");
+        Assertions.assertThat(mascotaActualizada.getActivo()).isFalse();
     }
 }
