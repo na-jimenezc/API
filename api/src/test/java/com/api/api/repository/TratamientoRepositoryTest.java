@@ -117,8 +117,6 @@ public class TratamientoRepositoryTest {
         Assertions.assertThat(despues).isEmpty();
     }
 
-
-
     //PRUEBA #22 - PRUEBA #4 DE LAS QUERIES PERSONALIZADAS
     //Probar queries personalizadas
     /*@Query("SELECT t FROM Tratamiento t " +
@@ -158,5 +156,4 @@ public class TratamientoRepositoryTest {
         Assertions.assertThat(tratamientos.get(0).getVeterinario()).isNotNull();
         Assertions.assertThat(tratamientos.get(0).getMedicamento()).isNotNull();
     }
-
 }

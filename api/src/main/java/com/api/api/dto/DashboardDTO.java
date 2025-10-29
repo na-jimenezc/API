@@ -1,4 +1,3 @@
-
 package com.api.api.dto;
 
 import java.util.List;
@@ -15,7 +14,6 @@ public class DashboardDTO {
     private List<TopTratamientoDTO> top3Tratamientos;
     private List<VeterinarioDTO> todosVeterinarios;
 
-    // Constructores
     public DashboardDTO() {}
 
     public DashboardDTO(int totalTratamientosUltimoMes, 
@@ -37,7 +35,6 @@ public class DashboardDTO {
         this.todosVeterinarios = todosVeterinarios;
     }
 
-    // Getters y Setters
     public int getTotalTratamientosUltimoMes() { return totalTratamientosUltimoMes; }
     public void setTotalTratamientosUltimoMes(int totalTratamientosUltimoMes) { this.totalTratamientosUltimoMes = totalTratamientosUltimoMes; }
 

@@ -1,121 +1,87 @@
-// DashboardServiceImpl.java
 package com.api.api.service.serviceImplementation;
 
 import com.api.api.dto.*;
-import com.api.api.model.*;
-import com.api.api.repository.*;
+import com.api.api.model.Veterinario;
+import com.api.api.repository.DashboardRepository;
+import com.api.api.repository.VeterinarioRepository;
 import com.api.api.service.serviceInterface.DashboardService;
-import org.springframework.stereotype.Service;
-
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class DashboardServiceImpl implements DashboardService {
 
-    private final TratamientoRepository tratamientoRepository;
-    private final MedicamentoRepository medicamentoRepository;
+    private final DashboardRepository dashboardRepository;
     private final VeterinarioRepository veterinarioRepository;
-    private final MascotaRepository mascotaRepository;
 
-    public DashboardServiceImpl(TratamientoRepository tratamientoRepository,
-                               MedicamentoRepository medicamentoRepository,
-                               VeterinarioRepository veterinarioRepository,
-                               MascotaRepository mascotaRepository) {
-        this.tratamientoRepository = tratamientoRepository;
-        this.medicamentoRepository = medicamentoRepository;
+    public DashboardServiceImpl(DashboardRepository dashboardRepository,
+                                VeterinarioRepository veterinarioRepository) {
+        this.dashboardRepository = dashboardRepository;
         this.veterinarioRepository = veterinarioRepository;
-        this.mascotaRepository = mascotaRepository;
     }
+
+    private LocalDate startDefault() { return LocalDate.now().minusDays(30); }
+    private LocalDate endDefault()   { return LocalDate.now().plusDays(1); }
 
     @Override
     public DashboardDTO getDashboardData() {
-        // Obtener todos los datos necesarios
-        List<Tratamiento> tratamientos = tratamientoRepository.findAllWithRelations();
-        List<Medicamento> medicamentos = medicamentoRepository.findAll();
-        List<Veterinario> veterinarios = veterinarioRepository.findAll();
-        List<Mascota> mascotas = mascotaRepository.findAll();
+        LocalDate start = startDefault();
+        LocalDate end   = endDefault();
 
-        // Procesar los datos para el dashboard
-        return procesarDatosDashboard(tratamientos, medicamentos, veterinarios, mascotas);
-    }
+        long totalTratamientos = dashboardRepository.countTratamientosBetween(start, end);
 
-    private DashboardDTO procesarDatosDashboard(List<Tratamiento> tratamientos, 
-                                               List<Medicamento> medicamentos,
-                                               List<Veterinario> veterinarios,
-                                               List<Mascota> mascotas) {
-        // Filtrar tratamientos del último mes
-        LocalDate haceUnMes = LocalDate.now().minusMonths(1);
-        List<Tratamiento> tratamientosUltimoMes = tratamientos.stream()
-                .filter(t -> t.getFecha() != null && !t.getFecha().isBefore(haceUnMes))
-                .collect(Collectors.toList());
-
-        // Mapa para acumular por medicamento
-        Map<String, TratamientoPorMedicamentoDTO> acumulador = new HashMap<>();
-        double ventasTotales = 0;
-        double costoTotales = 0;
-
-        for (Tratamiento t : tratamientosUltimoMes) {
-            Medicamento medicamento = t.getMedicamento();
-            String nombreMedicamento = medicamento != null ? medicamento.getNombre() : "Sin nombre";
-
-            TratamientoPorMedicamentoDTO dto = acumulador.getOrDefault(nombreMedicamento, 
-                new TratamientoPorMedicamentoDTO(nombreMedicamento, 0));
-
-            int cantidad = t.getCantidadUsada();
-            dto.setCantidad(dto.getCantidad() + cantidad);
-
-            double venta = medicamento != null ? medicamento.getPrecioVenta() * cantidad : 0;
-            double costo = medicamento != null ? medicamento.getPrecioCompra() * cantidad : 0;
-
-            ventasTotales += venta;
-            costoTotales += costo;
-
-            acumulador.put(nombreMedicamento, dto);
-        }
-
-        List<TratamientoPorMedicamentoDTO> tratamientosPorMedicamento = new ArrayList<>(acumulador.values());
-
-        // Top 3 tratamientos
-        List<TopTratamientoDTO> top3Tratamientos = acumulador.values().stream()
-            .sorted((a, b) -> b.getCantidad() - a.getCantidad())
-            .limit(3)
-            .map(dto -> new TopTratamientoDTO(dto.getMedicamento(), dto.getCantidad()))
+        var porMedRaw = dashboardRepository.rawTratamientosPorMedicamentoBetween(start, end);
+        List<TratamientoPorMedicamentoDTO> porMedicamento = porMedRaw.stream()
+            .map(r -> new TratamientoPorMedicamentoDTO((String) r[0], ((Number) r[1]).longValue()))
             .collect(Collectors.toList());
 
-        // Veterinarios
-        long veterinariosActivos = veterinarios.stream().filter(v -> v.getActivo() == 1).count();
-        long veterinariosInactivos = veterinarios.size() - veterinariosActivos;
+        var topRaw = dashboardRepository.rawTopTratamientosBetween(start, end);
+        List<TopTratamientoDTO> top3 = topRaw.stream()
+            .map(r -> new TopTratamientoDTO((String) r[0], ((Number) r[1]).longValue()))
+            .limit(3)
+            .collect(Collectors.toList());
 
-        // Mascotas
-        long totalMascotas = mascotas.size();
-        long mascotasActivas = mascotas.stream().filter(m -> m.getActivo() != null && m.getActivo()).count();
+        BigDecimal ventasDb = dashboardRepository.ventasTotalesBetween(start, end);
+        BigDecimal costosDb = dashboardRepository.costosTotalesBetween(start, end);
 
-        // Convertir lista de veterinarios a DTOs
-        List<VeterinarioDTO> todosVeterinarios = veterinarios.stream()
+        double ventas    = ventasDb  != null ? ventasDb.doubleValue()  : 0.0;
+        double costos    = costosDb  != null ? costosDb.doubleValue()  : 0.0;
+        double ganancias = Math.max(ventas - costos, 0.0);
+
+        int vetsAct = (int) dashboardRepository.countVeterinariosActivos();
+        int vetsInac= (int) dashboardRepository.countVeterinariosInactivos();
+        int mascTot = (int) dashboardRepository.countMascotasTotales();
+        int mascAct = (int) dashboardRepository.countMascotasActivas();
+
+        List<VeterinarioDTO> todosVet = veterinarioRepository.findAll().stream()
             .map(v -> new VeterinarioDTO(
-                v.getId(),
-                v.getNombre(),
-                v.getEspecialidad(),
-                v.getNombreUsuario(),
-                v.getImagen(),
-                v.getActivo(),
-                v.getConsultas()
+                    v.getId(),
+                    v.getNombre(),
+                    v.getEspecialidad(),
+                    v.getNombreUsuario(),
+                    v.getImagen(),
+                    v.getActivo(),
+                    v.getConsultas()
             ))
             .collect(Collectors.toList());
 
         return new DashboardDTO(
-            tratamientosUltimoMes.size(),
-            tratamientosPorMedicamento,
-            (int) veterinariosActivos,
-            (int) veterinariosInactivos,
-            (int) totalMascotas,
-            (int) mascotasActivas,
-            ventasTotales,
-            Math.max(ventasTotales - costoTotales, 0),
-            top3Tratamientos,
-            todosVeterinarios
+            (int) totalTratamientos,
+            porMedicamento,
+            vetsAct,
+            vetsInac,
+            mascTot,
+            mascAct,
+            ventas,
+            ganancias,
+            top3,
+            todosVet
         );
     }
 }

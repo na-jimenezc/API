@@ -117,7 +117,4 @@ public class VeterinarioRepositoryTest {
         Assertions.assertThat(porEspecialidad).isNotEmpty();
         Assertions.assertThat(porEspecialidad.get(0).getEspecialidad()).isEqualTo("Dermatología");
     }
-    
-
-    
 }

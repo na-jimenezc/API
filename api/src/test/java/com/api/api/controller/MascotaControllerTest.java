@@ -73,7 +73,7 @@ public class MascotaControllerTest {
     }
 
     //PRUEBA #16
-    //Test oara crear una nueva mascota con el DTO
+    //Test para crear una nueva mascota con el DTO
     @Test
     public void MascotaController_CrearMascota_Mascota() throws Exception {
         MascotaCreateDTO dto = new MascotaCreateDTO();
@@ -154,5 +154,4 @@ public class MascotaControllerTest {
         Mockito.doNothing().when(mascotaService).desactivarMascota(1L);
         mockMvc.perform(delete("/api/mascotas/1/desactivar")).andExpect(status().isOk());
     }
-
 }
