@@ -60,3 +60,31 @@ The connection was not closed by the application and is garbage collected [90018
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:690)
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
 	... 54 more
+2025-10-31 14:42:43.518605-05:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "MEDICAMENTO" no encontrada
+Table "MEDICAMENTO" not found; SQL statement:
+insert into medicamento (nombre,precio_compra,precio_venta,unidades_disponibles,unidades_vendidas,id) values (?,?,?,?,?,?) [42102-232]
+2025-10-31 14:42:44.882487-05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "HTE_VETERINARIO" ya existe
+Table "HTE_VETERINARIO" already exists; SQL statement:
+create global temporary table HTE_veterinario(activo integer, consultas integer, rn_ integer not null, id bigint, contrasenia varchar(255), especialidad varchar(255), imagen varchar(255), nombre varchar(255), nombre_usuario varchar(255), primary key (rn_)) TRANSACTIONAL [42101-232]
+2025-10-31 14:42:44.886490-05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "HTE_ADMINISTRADOR" ya existe
+Table "HTE_ADMINISTRADOR" already exists; SQL statement:
+create global temporary table HTE_administrador(rn_ integer not null, id bigint, clave varchar(255), correo varchar(255), nombre varchar(255), primary key (rn_)) TRANSACTIONAL [42101-232]
+2025-10-31 14:42:44.890488-05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "HTE_TRATAMIENTO" ya existe
+Table "HTE_TRATAMIENTO" already exists; SQL statement:
+create global temporary table HTE_tratamiento(cantidad_usada integer, fecha date, rn_ integer not null, id bigint, mascota_id bigint, medicamento_id bigint, veterinario_id bigint, primary key (rn_)) TRANSACTIONAL [42101-232]
+2025-10-31 14:42:44.902252-05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "HTE_CLIENTE" ya existe
+Table "HTE_CLIENTE" already exists; SQL statement:
+create global temporary table HTE_cliente(rn_ integer not null, id bigint, cedula varchar(255), celular varchar(255), correo varchar(255), nombre varchar(255), primary key (rn_)) TRANSACTIONAL [42101-232]
+2025-10-31 14:42:44.906252-05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "HTE_MASCOTA" ya existe
+Table "HTE_MASCOTA" already exists; SQL statement:
+create global temporary table HTE_mascota(activo boolean, edad integer, rn_ integer not null, cliente_id bigint, id bigint, peso float(53), enfermedad varchar(255), estado varchar(255), fotourl varchar(255), nombre varchar(255), raza varchar(255), tipo varchar(255), primary key (rn_)) TRANSACTIONAL [42101-232]
+2025-10-31 14:42:44.912037-05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "HTE_MEDICAMENTO" ya existe
+Table "HTE_MEDICAMENTO" already exists; SQL statement:
+create global temporary table HTE_medicamento(precio_compra float(24), precio_venta float(24), rn_ integer not null, unidades_disponibles integer, unidades_vendidas integer, id bigint, nombre varchar(255), primary key (rn_)) TRANSACTIONAL [42101-232]
