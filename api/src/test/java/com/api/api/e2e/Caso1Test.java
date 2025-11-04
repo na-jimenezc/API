@@ -169,9 +169,9 @@ public class Caso1Test {
         
         //Escribir y mandar datos
         inputUsuario.sendKeys(usuarioVetValido);
-                  pausa(1000);
+                  pausa(2000);
         inputContrasena.sendKeys(vetConstraseniaValida);
-                  pausa(1000);
+                  pausa(2000);
         
         wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button.boton-enviar[type='submit']")));
         btnAcceder = driver.findElement(By.cssSelector("button.boton-enviar[type='submit']"));
@@ -211,11 +211,11 @@ public class Caso1Test {
         
         //Envio de datos con error en el correo
         inputCedula.sendKeys(cedulaNuevoCliente);
-                  pausa(1000);
+                  pausa(2000);
         inputNombre.sendKeys(nombreNuevoCliente);
-                  pausa(1000);
+                  pausa(2000);
         inputCorreo.sendKeys("correo-invalido"); 
-                  pausa(1000);
+                  pausa(2000);
         inputCelular.sendKeys(celularNuevoCliente);
         
         WebElement btnRegistrar = driver.findElement(By.cssSelector("button.btn-primary[type='submit']"));
@@ -371,14 +371,14 @@ public class Caso1Test {
     }
 
      private void logoutVeterinario(){
-        //Buscar el botón de logout
         WebElement btnLogout = wait.until(
-            ExpectedConditions.elementToBeClickable(By.cssSelector("a[routerLink='/logout'], a.vmk-btn--outline"))
-        );
+            ExpectedConditions.elementToBeClickable(By.cssSelector("a[routerLink='/logout']")));
 
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});", btnLogout);
+        pausa(500);
+        
         btnLogout.click();
         
-        //Revisar que se mandó a la página base
         wait.until(ExpectedConditions.or(
             ExpectedConditions.urlContains(BASE_URL)
         ));
@@ -521,9 +521,5 @@ public class Caso1Test {
         System.out.println("Información del dueño verificada:");
         System.out.println("Nombre: Natalia Jiménez");
         System.out.println("Datos de contacto presentes");
-    }
-
-    
-
-    
+    }    
 }
