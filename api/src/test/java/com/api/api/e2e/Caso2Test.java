@@ -218,7 +218,7 @@ public class Caso2Test {
         System.out.println("Formulario cargado");
         
         // Esperar carga de mascotas en el dropdown
-        WebDriverWait longWait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebDriverWait longWait = new WebDriverWait(driver, Duration.ofSeconds(3));
         try {
             longWait.until(driver -> {
                 WebElement selectMascota = driver.findElement(By.cssSelector("select[formcontrolname='mascotaId']"));
