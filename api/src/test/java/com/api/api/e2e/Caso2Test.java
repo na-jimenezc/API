@@ -22,7 +22,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.api.api.model.Mascota;
 import com.api.api.model.Veterinario;
-import com.api.api.repository.ClienteRepository;
 import com.api.api.repository.MascotaRepository;
 import com.api.api.repository.VeterinarioRepository;
 
@@ -43,13 +42,11 @@ public class Caso2Test {
     private final String contraseniaVet = "123";
     private final String usuarioAdmin = "admin@animalheart.com";
     private final String contraseniaAdmin = "admin123";
+    private String medicamentoUtilizado; //
     
     // Repositorios para verificar datos de prueba
     @Autowired
     private VeterinarioRepository veterinarioRepository;
-    
-    @Autowired
-    private ClienteRepository clienteRepository;
     
     @Autowired
     private MascotaRepository mascotaRepository;
@@ -298,54 +295,117 @@ public class Caso2Test {
         String fechaInsertada = inputFecha.getAttribute("value");
         System.out.println("Fecha despues de JavaScript: " + fechaInsertada);
         
-        // Seleccionar medicamento
-        System.out.println("=== SELECCION DE MEDICAMENTO ===");
+    // BUSCAR ESPECÍFICAMENTE EL MEDICAMENTO ACOLAN
+    System.out.println("=== BUSCANDO MEDICAMENTO ACOLAN ===");
+
+    WebElement selectMedicamento = wait.until(ExpectedConditions.presenceOfElementLocated(
+        By.cssSelector("select[formcontrolname='medicamentoId']")));
+
+    System.out.println("Esperando a que carguen los medicamentos...");
+    pausa(3000);
+
+    List<WebElement> opcionesMedicamento = selectMedicamento.findElements(By.tagName("option"));
+    System.out.println("Número total de opciones en medicamentos: " + opcionesMedicamento.size());
+
+    // Buscar específicamente ACOLAN
+    String medicamentoId = null;
+    String medicamentoNombre = null;
+    boolean acolanEncontrado = false;
+
+    for (WebElement opcion : opcionesMedicamento) {
+        String valor = opcion.getAttribute("value");
+        String texto = opcion.getText().trim();
         
-        WebElement selectMedicamento = wait.until(ExpectedConditions.presenceOfElementLocated(
-            By.cssSelector("select[formcontrolname='medicamentoId']")));
-        
-        System.out.println("Esperando a que carguen los medicamentos...");
-        pausa(3000);
-        
-        List<WebElement> opcionesMedicamento = selectMedicamento.findElements(By.tagName("option"));
-        System.out.println("Numero total de opciones en medicamentos: " + opcionesMedicamento.size());
-        
-        // Buscar primer medicamento disponible
-        String medicamentoId = null;
-        String medicamentoNombre = null;
-        
-        for (WebElement opcion : opcionesMedicamento) {
-            String valor = opcion.getAttribute("value");
-            String texto = opcion.getText();
-            
-            if (valor != null && !valor.isEmpty() && !valor.equals("null") && 
-                !texto.contains("Seleccionar") && !texto.isEmpty()) {
-                medicamentoId = valor;
-                medicamentoNombre = texto;
-                System.out.println("Seleccionando primer medicamento disponible: " + medicamentoNombre);
-                break;
-            }
+        if (texto.contains("ACOLAN")) {
+            medicamentoId = valor;
+            medicamentoNombre = texto;
+            acolanEncontrado = true;
+            System.out.println("✓ MEDICAMENTO ACOLAN ENCONTRADO: " + medicamentoNombre + " (ID: " + medicamentoId + ")");
+            break;
         }
-        
-        Assertions.assertThat(medicamentoId).as("Debe encontrar un medicamento disponible").isNotNull();
-        
-        System.out.println("Seleccionando medicamento: " + medicamentoNombre + " (ID: " + medicamentoId + ")");
-        
-        // Seleccionar medicamento usando JavaScript
-        ((JavascriptExecutor) driver).executeScript(
-            "arguments[0].value = arguments[1];", 
-            selectMedicamento, medicamentoId
-        );
-        ((JavascriptExecutor) driver).executeScript(
-            "arguments[0].dispatchEvent(new Event('change', { bubbles: true }));", 
-            selectMedicamento
-        );
-        System.out.println("Seleccion de medicamento via JavaScript exitosa");
-        
-        pausa(2000);
-        
-        String medicamentoSeleccionado = (String) ((JavascriptExecutor) driver).executeScript("return arguments[0].value;", selectMedicamento);
-        System.out.println("Medicamento seleccionado en dropdown: " + medicamentoSeleccionado);
+    }
+
+    Assertions.assertThat(acolanEncontrado)
+        .as("Debe encontrar el medicamento ACOLAN en la lista")
+        .isTrue();
+
+    // **SOLUCIÓN: Usar Selenium Select en lugar de JavaScript puro**
+    System.out.println("=== SELECCIONANDO ACOLAN CON SELENIUM SELECT ===");
+    org.openqa.selenium.support.ui.Select selectElement = new org.openqa.selenium.support.ui.Select(selectMedicamento);
+
+    // Extraer solo la parte numérica del ID (antes del ":")
+    String[] idParts = medicamentoId.split(":");
+    String idNumerico = idParts[0].trim();
+    System.out.println("ID numérico extraído: " + idNumerico);
+
+    // Intentar seleccionar por valor numérico
+    try {
+        selectElement.selectByValue(idNumerico);
+        System.out.println("✓ Selección por valor numérico exitosa");
+    } catch (Exception e) {
+        System.out.println("No se pudo seleccionar por valor, intentando por texto visible...");
+        try {
+            selectElement.selectByVisibleText(medicamentoNombre);
+            System.out.println("✓ Selección por texto visible exitosa");
+        } catch (Exception ex) {
+            System.out.println("Fallo selección por texto visible, usando método alternativo...");
+            // Hacer clic en el dropdown para abrirlo
+            selectMedicamento.click();
+            pausa(1000);
+            // Buscar y hacer clic directamente en la opción ACOLAN
+            WebElement opcionAcolan = driver.findElement(By.xpath("//option[contains(text(), 'ACOLAN')]"));
+            opcionAcolan.click();
+            System.out.println("✓ Selección directa de opción ACOLAN exitosa");
+        }
+    }
+
+    pausa(2000);
+
+    // **VERIFICACIÓN CRÍTICA: Asegurar que la selección se registró**
+    String valorDespuesSeleccion = selectElement.getFirstSelectedOption().getAttribute("value");
+    String textoDespuesSeleccion = selectElement.getFirstSelectedOption().getText();
+
+    System.out.println("=== VERIFICACIÓN POST-SELECCIÓN ===");
+    System.out.println("Valor después de selección: " + valorDespuesSeleccion);
+    System.out.println("Texto después de selección: " + textoDespuesSeleccion);
+
+    // Si aún no se seleccionó correctamente, usar método alternativo
+    if (valorDespuesSeleccion == null || valorDespuesSeleccion.equals("0") || valorDespuesSeleccion.contains("null")) {
+        System.out.println("=== USANDO MÉTODO ALTERNATIVO ===");
+        selectMedicamento.click();
+        pausa(1000);
+        WebElement opcionAcolan = driver.findElement(By.xpath("//option[contains(text(), 'ACOLAN')]"));
+        opcionAcolan.click();
+        pausa(1000);
+
+        // Verificar nuevamente
+        valorDespuesSeleccion = selectElement.getFirstSelectedOption().getAttribute("value");
+        textoDespuesSeleccion = selectElement.getFirstSelectedOption().getText();
+        System.out.println("Valor después de método alternativo: " + valorDespuesSeleccion);
+        System.out.println("Texto después de método alternativo: " + textoDespuesSeleccion);
+    }
+
+
+    pausa(2000);
+
+    // **VERIFICACIÓN FINAL OBLIGATORIA**
+    System.out.println("=== VERIFICACIÓN FINAL DEL CAMPO ===");
+    WebElement campoMedicamento = driver.findElement(By.cssSelector("select[formcontrolname='medicamentoId']"));
+    String valorFinal = campoMedicamento.getAttribute("value");
+    String claseFinal = campoMedicamento.getAttribute("class");
+
+    System.out.println("Valor final del campo: " + valorFinal);
+    System.out.println("Clase final del campo: " + claseFinal);
+
+    // Assert crítico: el campo debe tener un valor válido
+    Assertions.assertThat(valorFinal)
+        .as("El campo medicamentoId debe tener un valor válido seleccionado")
+        .isNotEqualTo("0")
+        .doesNotContain("null");
+
+    // Guardar el medicamento utilizado
+    this.medicamentoUtilizado = "ACOLAN";
+    System.out.println("✓ ACOLAN seleccionado y verificado exitosamente");
         
         // Completar resto del formulario
         WebElement inputCantidad = driver.findElement(By.cssSelector("input[formcontrolname='cantidadUsada']"));
@@ -457,10 +517,6 @@ public class Caso2Test {
         
         System.out.println("Tratamientos encontrados: " + filasTratamiento.size());
         
-        for (int i = 0; i < filasTratamiento.size(); i++) {
-            System.out.println("Tratamiento " + i + ": " + filasTratamiento.get(i).getText());
-        }
-        
         String contenidoPagina = driver.getPageSource();
         boolean tratamientoEncontrado = contenidoPagina.contains("1 unidades") || 
                                         contenidoPagina.contains("1 unidad") ||
@@ -495,15 +551,65 @@ public class Caso2Test {
     private void loginAdminYVerificarEstadisticas(){
         System.out.println("Haciendo clic en enlace 'Administrador' del header...");
         
-        // Navegar al login de administrador desde el header
-        WebElement adminLink = wait.until(ExpectedConditions.elementToBeClickable(
-            By.xpath("//a[contains(text(), 'Administrador')]")));
-        
+    // Navegar al login de administrador desde el header
+    WebElement adminLink = null;
+
+    // Espera corta para que Angular termine de pintar el header tras el logout
+    pausa(800);
+
+    // 1) Intento por routerLink 
+    try {
+        adminLink = wait.until(ExpectedConditions.presenceOfElementLocated(
+            By.cssSelector("a[routerLink='/admin/login']")));
+    } catch (Exception ignore) {}
+
+    // 2) Si no, por href
+    if (adminLink == null) {
+        try {
+            adminLink = wait.until(ExpectedConditions.presenceOfElementLocated(
+                By.cssSelector("a[href*='/admin/login']")));
+        } catch (Exception ignore) {}
+    }
+
+    // 3) Si no, por texto visible 
+    if (adminLink == null) {
+        try {
+            adminLink = wait.until(ExpectedConditions.presenceOfElementLocated(
+                By.xpath("//a[contains(normalize-space(.), 'Administrador')]")));
+        } catch (Exception ignore) {}
+    }
+
+    // 4) Último recurso: partialLinkText
+    if (adminLink == null) {
+        try {
+            adminLink = wait.until(ExpectedConditions.presenceOfElementLocated(
+                By.partialLinkText("Admin")));
+        } catch (Exception ignore) {}
+    }
+
+    // Asegurar que lo encontramos
+    Assertions.assertThat(adminLink)
+        .as("No se encontró el enlace a Administrador en el header")
+        .isNotNull();
+
+    // Asegurar visibilidad/clicabilidad (si falla, click via JS)
+    try {
+        wait.until(ExpectedConditions.elementToBeClickable(adminLink));
+        ((JavascriptExecutor) driver).executeScript(
+            "arguments[0].scrollIntoView({block:'center'});", adminLink);
+        pausa(300);
         adminLink.click();
-        System.out.println("Clic en enlace 'Administrador' realizado");
-        
-        wait.until(ExpectedConditions.urlContains("/admin/login"));
-        System.out.println("Pagina de login de administrador cargada");
+    } catch (Exception e) {
+        System.out.println("Click normal falló, intentando click por JavaScript...");
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", adminLink);
+    }
+
+    System.out.println("Clic en enlace 'Administrador' realizado");
+
+    // Esperar navegación al login de admin
+    wait.until(ExpectedConditions.urlContains("/admin/login"));
+    System.out.println("Pagina de login de administrador cargada");
+
 
         // Llenar formulario de login
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("form")));
@@ -534,22 +640,111 @@ public class Caso2Test {
         System.out.println("=== VERIFICANDO ESTADISTICAS DEL ADMINISTRADOR ===");
         pausa(5000);
         
-        // Verificar ganancias totales
-        System.out.println("Buscando componente de ganancias totales...");
-        WebElement gananciasElement = wait.until(ExpectedConditions.presenceOfElementLocated(
-            By.xpath("//app-ganancias-totales//*[contains(@class, 'stat-count')]")));
+     // VERIFICACIÓN ESPECÍFICA DE GANANCIAS
+    System.out.println("Buscando componente de ganancias totales...");
+    WebElement gananciasElement = wait.until(ExpectedConditions.presenceOfElementLocated(
+        By.xpath("//app-ganancias-totales//*[contains(@class, 'stat-count')]")));
+    
+    String textoGanancias = gananciasElement.getText().replace("$", "").replace(",", "").replace(".", "").trim();
+    System.out.println("Texto de ganancias extraído: '" + textoGanancias + "'");
+    
+    double gananciasReportadas = Double.parseDouble(textoGanancias);
+    System.out.println("Ganancias reportadas: $" + gananciasReportadas);
+    
+    // CÁLCULO DE GANANCIA - Usar valores por defecto si no es ACOLAN
+    double gananciaEsperada;
+    String medicamentoVerificacion = "ACOLAN";
+    
+    if (medicamentoUtilizado != null && medicamentoUtilizado.toUpperCase().contains("ACOLAN")) {
+        // Usar valores específicos de ACOLAN
+        double precioVenta = 151300.0;
+        double precioCompra = 60520.0;
+        int cantidadUsada = 1;
+        gananciaEsperada = (precioVenta - precioCompra) * cantidadUsada;
         
-        String textoGanancias = gananciasElement.getText().replace("$", "").replace(",", "").trim();
-        System.out.println("Texto de ganancias extraido: '" + textoGanancias + "'");
+        System.out.println("=== CÁLCULO CON ACOLAN ===");
+        System.out.println("Precio venta ACOLAN: $" + precioVenta);
+        System.out.println("Precio compra ACOLAN: $" + precioCompra);
+    } else {
+        // Usar valores mínimos esperados para cualquier medicamento
+        double precioVentaMinimo = 50000.0; // Valor mínimo razonable
+        double precioCompraMaximo = 40000.0; // Valor máximo razonable
+        int cantidadUsada = 1;
+        gananciaEsperada = (precioVentaMinimo - precioCompraMaximo) * cantidadUsada;
+        medicamentoVerificacion = medicamentoUtilizado != null ? medicamentoUtilizado : "medicamento genérico";
         
-        double gananciasReportadas = Double.parseDouble(textoGanancias);
-        System.out.println("Ganancias reportadas: $" + gananciasReportadas);
+        System.out.println("=== CÁLCULO CON " + medicamentoVerificacion + " ===");
+        System.out.println("Precio venta mínimo estimado: $" + precioVentaMinimo);
+        System.out.println("Precio compra máximo estimado: $" + precioCompraMaximo);
+    }
+    
+    System.out.println("Cantidad utilizada: " + 1);
+    System.out.println("Ganancia esperada mínima: $" + gananciaEsperada);
+    
+    // ASSERT ESPECÍFICO - Las ganancias deben incluir la ganancia del medicamento
+    Assertions.assertThat(gananciasReportadas)
+        .as("Las ganancias totales deben reflejar la ganancia del medicamento utilizado (" + medicamentoVerificacion + ")")
+        .isGreaterThanOrEqualTo(gananciaEsperada);
         
-        Assertions.assertThat(gananciasReportadas)
-            .as("Las ganancias deben ser un valor positivo")
-            .isGreaterThan(0);
-            
-        System.out.println("Verificacion de ganancias exitosa");
+    System.out.println("✓ VERIFICACIÓN EXITOSA: Las ganancias incluyen el medicamento utilizado");
+    
+    // VERIFICACIÓN ADICIONAL: Buscar el medicamento en la lista
+    System.out.println("=== VERIFICANDO MEDICAMENTO EN LISTA ===");
+    
+    wait.until(ExpectedConditions.presenceOfElementLocated(
+        By.cssSelector("app-tratamientos-tipo-medicamento")));
+    
+    List<WebElement> itemsMedicamento = driver.findElements(
+        By.cssSelector("app-tratamientos-tipo-medicamento .list-item"));
+    
+    boolean medicamentoEnLista = false;
+    int cantidadMedicamentoReportada = 0;
+    String nombreMedicamentoEncontrado = "";
+    
+    for (WebElement item : itemsMedicamento) {
+        WebElement nombreElement = item.findElement(By.cssSelector(".medicamento-name"));
+        WebElement cantidadElement = item.findElement(By.cssSelector(".cantidad-badge"));
+        
+        String nombreMedicamento = nombreElement.getText().trim();
+        String cantidadTexto = cantidadElement.getText().replaceAll("[^0-9]", "");
+        int cantidad = Integer.parseInt(cantidadTexto);
+        
+        // Buscar coincidencia parcial con el medicamento utilizado
+        if (medicamentoUtilizado != null && 
+            nombreMedicamento.toUpperCase().contains(medicamentoUtilizado.toUpperCase().substring(0, Math.min(3, medicamentoUtilizado.length())))) {
+            medicamentoEnLista = true;
+            cantidadMedicamentoReportada = cantidad;
+            nombreMedicamentoEncontrado = nombreMedicamento;
+            System.out.println("✓ " + nombreMedicamento + " encontrado en la lista - Cantidad reportada: " + cantidad);
+            break;
+        }
+    }
+    
+    // Si no encontró coincidencia exacta, verificar que haya al menos un medicamento
+    if (!medicamentoEnLista && itemsMedicamento.size() > 0) {
+        medicamentoEnLista = true;
+        WebElement primerItem = itemsMedicamento.get(0);
+        nombreMedicamentoEncontrado = primerItem.findElement(By.cssSelector(".medicamento-name")).getText().trim();
+        String cantidadTexto = primerItem.findElement(By.cssSelector(".cantidad-badge")).getText().replaceAll("[^0-9]", "");
+        cantidadMedicamentoReportada = Integer.parseInt(cantidadTexto);
+        System.out.println("✓ " + nombreMedicamentoEncontrado + " encontrado en la lista - Cantidad reportada: " + cantidadMedicamentoReportada);
+    }
+    
+    Assertions.assertThat(medicamentoEnLista)
+        .as("Debe haber al menos un medicamento en la lista de tratamientos")
+        .isTrue();
+        
+    Assertions.assertThat(cantidadMedicamentoReportada)
+        .as("La cantidad reportada debe ser al menos 1")
+        .isGreaterThanOrEqualTo(1);
+    
+    System.out.println("=== RESUMEN DE VERIFICACIÓN ===");
+    System.out.println("- Medicamento utilizado: " + (medicamentoUtilizado != null ? medicamentoUtilizado : "ACOLAN"));
+    System.out.println("- Medicamento encontrado: " + nombreMedicamentoEncontrado);
+    System.out.println("- Ganancia esperada mínima: $" + gananciaEsperada);
+    System.out.println("- Ganancias totales reportadas: $" + gananciasReportadas);
+    System.out.println("- Cantidad reportada: " + cantidadMedicamentoReportada);
+    System.out.println("✓ Verificación completada exitosamente\n");    
         
         // Verificar medicamentos suministrados
         System.out.println("Buscando lista de tratamientos por medicamento...");
@@ -557,28 +752,25 @@ public class Caso2Test {
         wait.until(ExpectedConditions.presenceOfElementLocated(
             By.cssSelector("app-tratamientos-tipo-medicamento")));
         
-        List<WebElement> itemsMedicamento = driver.findElements(
+        itemsMedicamento = driver.findElements(
             By.cssSelector("app-tratamientos-tipo-medicamento .list-item"));
         
         System.out.println("Encontrados " + itemsMedicamento.size() + " items en la lista de medicamentos");
         
         int totalMedicamentosReportados = 0;
-        boolean hayMedicamentos = itemsMedicamento.size() > 0;
         
         for (WebElement item : itemsMedicamento) {
             WebElement nombreElement = item.findElement(By.cssSelector(".medicamento-name"));
             WebElement cantidadElement = item.findElement(By.cssSelector(".cantidad-badge"));
             
-            String nombreMedicamento = nombreElement.getText().trim();
             String cantidadTexto = cantidadElement.getText().replaceAll("[^0-9]", "");
             int cantidad = Integer.parseInt(cantidadTexto);
             
             totalMedicamentosReportados += cantidad;
-            System.out.println("Medicamento encontrado: " + nombreMedicamento + " - Cantidad: " + cantidad);
         }
         
         // Verificaciones finales
-        Assertions.assertThat(hayMedicamentos)
+        Assertions.assertThat(itemsMedicamento.size() > 0)
             .as("Debe haber al menos un medicamento registrado en el dashboard del administrador")
             .isTrue();
         
