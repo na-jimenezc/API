@@ -25,7 +25,10 @@ public class Veterinario {
     private String nombre;
     private String especialidad;
     private String nombreUsuario;
+
+    //@Transient
     private String contrasenia;
+
     private String imagen;
     private int activo;
     private int consultas;
@@ -41,6 +44,7 @@ public class Veterinario {
     private List<Tratamiento> tratamientos = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private UserEntity userEntity;
 
     public Veterinario() {}

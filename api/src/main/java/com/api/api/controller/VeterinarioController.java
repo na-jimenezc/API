@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,11 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.api.api.dto.VeterinarioCreateDTO;
 import com.api.api.dto.VeterinarioUpdateDTO;
+import com.api.api.model.UserEntity;
 import com.api.api.model.Veterinario;
+import com.api.api.repository.UserEntityRepository;
+import com.api.api.security.CustomUserDetailService;
 import com.api.api.service.serviceInterface.VeterinarioService;
 
-import org.springframework.web.bind.annotation.*;
-import com.api.api.service.serviceInterface.VeterinarioService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -34,6 +36,14 @@ public class VeterinarioController {
 
     @Autowired
     private VeterinarioService veterinarioService;
+
+    @Autowired
+    private UserEntityRepository userEntityRepository;
+
+    @Autowired
+    private CustomUserDetailService customUserDetailService;
+
+
 
     // http://localhost:8080/api/veterinarios/login?nombreUsuario=vet1&contrasenia=pass123
     @PostMapping("/login")
@@ -85,6 +95,14 @@ public class VeterinarioController {
     @PostMapping
     public ResponseEntity<Veterinario> crear(@RequestBody VeterinarioCreateDTO dto) {
         try {
+
+
+            //Se verifica si ya existe el veterinario
+            if(userEntityRepository.existsByUsername(dto.getNombreUsuario())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        
+            }
+
             /*Se utiliza el DTO que acepta solamente nombre, usuario
              * , especialidad, contraseña e imagen. De resto se pone en default y se manda al 
              * servicio para guardarlo en la base de datos.
@@ -98,10 +116,20 @@ public class VeterinarioController {
             nuevo.setActivo(1);
             nuevo.setConsultas(0);
 
+            //Se guarda y crea el UserEntity
+             UserEntity userEntity = customUserDetailService.saveVeterinario(nuevo);
+            nuevo.setUserEntity(userEntity);
+
             Veterinario guardado = veterinarioService.guardarVeterinario(nuevo);
-            return ResponseEntity.ok(guardado);
+
+            if(guardado==null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
+
         } catch (Exception e) {
-            return ResponseEntity.status(500).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

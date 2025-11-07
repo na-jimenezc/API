@@ -3,6 +3,7 @@ package com.api.api.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -23,6 +24,8 @@ public class Administrador{
     private Long id;
     private String nombre;
     private String correo;
+    
+    //@Transient
     private String clave;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
@@ -35,6 +38,7 @@ public class Administrador{
     private List<Veterinario> veterinarios = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private UserEntity userEntity;
 
 

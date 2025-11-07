@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.api.api.model.Cliente;
 import com.api.api.model.Mascota;
+import com.api.api.model.UserEntity;
+import com.api.api.repository.UserEntityRepository;
+import com.api.api.security.CustomUserDetailService;
 import com.api.api.service.serviceInterface.ClienteService;
 
 @RestController
@@ -26,6 +30,12 @@ public class ClienteController {
 
     @Autowired
     private ClienteService clienteService;
+
+    @Autowired
+    private CustomUserDetailService customUserDetailService;
+
+    @Autowired
+    private UserEntityRepository userRepository;
 
     // http://localhost:8080/api/clientes
     @GetMapping
@@ -43,13 +53,49 @@ public class ClienteController {
 
     // http://localhost:8080/api/clientes
     @PostMapping
-    public Cliente crearCliente(@RequestBody Cliente cliente) {
-        if (clienteService.existeClientePorCedula(cliente.getCedula())) {
-           return null;
+    public ResponseEntity<Cliente> crearCliente(@RequestBody Cliente cliente) {
+        try {
+            System.out.println("INICIO CREACIÓN CLIENTE");
+            System.out.println("Correo: " + cliente.getCorreo());
+            System.out.println("Cédula: " + cliente.getCedula());
+            
+            if(userRepository.existsByUsername(cliente.getCorreo())) {
+                System.out.println("ERROR: Username ya existe");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+
+            if(clienteService.existeClientePorCedula(cliente.getCedula())) {
+                System.out.println("ERROR: Cédula ya existe");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+
+            System.out.println("Guardando UserEntity...");
+            UserEntity userEntity = customUserDetailService.saveCliente(cliente);
+            System.out.println("UserEntity guardado con éxito. ID: " + userEntity.getId());
+
+            cliente.setUserEntity(userEntity);
+            System.out.println("UserEntity asignado al cliente");
+            
+            System.out.println("Guardando Cliente...");
+            Cliente guardado = clienteService.guardarCliente(cliente);
+            System.out.println("Cliente guardado con éxito. ID: " + guardado.getId());
+            
+            if(guardado == null){
+                System.out.println("ERROR: Cliente no se pudo guardar");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+            
+            System.out.println("=== FIN CREACIÓN CLIENTE ===");
+            return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
+            
+        } catch (Exception e) {
+            System.err.println("ERROR EN CREACIÓN: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        Cliente nuevo = clienteService.guardarCliente(cliente);
-        return nuevo;
     }
+
+
 
     @PutMapping("/{id}")
     public Cliente actualizarCliente(
