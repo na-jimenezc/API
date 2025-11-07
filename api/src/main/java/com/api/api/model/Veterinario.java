@@ -14,6 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class Veterinario {
@@ -38,6 +39,9 @@ public class Veterinario {
     @OneToMany(mappedBy = "veterinario", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
     private List<Tratamiento> tratamientos = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserEntity userEntity;
 
     public Veterinario() {}
 
@@ -144,5 +148,13 @@ public class Veterinario {
 
     public void setAdministradores(List<Administrador> administradores) {
             this.administradores = administradores;
+    }
+
+    public void setUserEntity(UserEntity userEntity){
+        this.userEntity = userEntity;
+    }
+
+    public UserEntity getUserEntity(){
+        return this.userEntity;
     }
 }

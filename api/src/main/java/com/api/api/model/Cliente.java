@@ -2,12 +2,14 @@ package com.api.api.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 @Entity   
 public class Cliente {
@@ -23,6 +25,9 @@ public class Cliente {
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Mascota> mascotas = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserEntity userEntity;
 
     public Cliente() {}
     public Cliente(String cedula, String nombre, String correo, String celular) {
@@ -86,5 +91,13 @@ public class Cliente {
 
         public void setMascotas(List<Mascota> mascotas) {
         this.mascotas = mascotas;
+        }
+
+        public void setUserEntity(UserEntity userEntity){
+            this.userEntity = userEntity;
+        }
+
+        public UserEntity getUserEntity(){
+            return this.userEntity;
         }
 }

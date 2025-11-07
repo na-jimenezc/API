@@ -17,5 +17,9 @@ public class Rol {
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id;
     private String nombre;
+
+    public Rol(String nombre){
+        this.nombre = nombre;
+    }
     
 }

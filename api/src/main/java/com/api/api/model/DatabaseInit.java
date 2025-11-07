@@ -5,16 +5,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
 import com.api.api.repository.AdministradorRepository;
 import com.api.api.repository.ClienteRepository;
 import com.api.api.repository.MascotaRepository;
 import com.api.api.repository.MedicamentoRepository;
+import com.api.api.repository.RolRepository;
 import com.api.api.repository.TratamientoRepository;
+import com.api.api.repository.UserEntityRepository;
 import com.api.api.repository.VeterinarioRepository;
+
 import jakarta.transaction.Transactional;
 
 @Component
@@ -40,28 +46,59 @@ public class DatabaseInit implements ApplicationRunner {
     @Autowired
     TratamientoRepository tratamientosRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    RolRepository rolRepository;
+
+    @Autowired
+    UserEntityRepository userRepository;
+
     @Override
     public void run(org.springframework.boot.ApplicationArguments args) throws Exception {
 
-        Administrador admin1 = new Administrador("Administrador Principal", "admin@animalheart.com", "admin123");
-        administradorRepository.save(admin1);
+
+        rolRepository.save(new Rol("VET"));
+        rolRepository.save(new Rol("CLI"));
+        rolRepository.save(new Rol("ADM"));
+
+
+        Administrador admSave;
+        UserEntity userEntity;
+
+        admSave = new Administrador("Administrador Principal", "admin@animalheart.com", "admin123");
+        userEntity = saveUserAdm(admSave);
+        admSave.setUserEntity(userEntity);
+
 
         Veterinario vet1 = new Veterinario("Dr. Juan Pérez", "Cirugía", "juanPerez", "123", "/assets/images/drJuan.jpeg", 1, 100);
         Veterinario vet2 = new Veterinario("Dra. Laura Gómez", "Dermatología", "lauraGomez", "123", "/assets/images/draLaura.jpeg", 1, 85);
         Veterinario vet3 = new Veterinario("Dr. Carlos Rodríguez", "Cardiología", "carlosRod", "123", "/assets/images/drCarlos.jpeg", 1, 120);
+
+        vet1.setUserEntity(saveUserVet(vet1));
+        vet2.setUserEntity(saveUserVet(vet2));
+        vet3.setUserEntity(saveUserVet(vet3));
+
         
         veterinarioRepository.saveAll(Arrays.asList(vet1, vet2, vet3));
 
-        admin1.agregarVeterinario(vet1);
-        admin1.agregarVeterinario(vet2);
-        admin1.agregarVeterinario(vet3);
-        administradorRepository.save(admin1);
+        admSave.agregarVeterinario(vet1);
+        admSave.agregarVeterinario(vet2);
+        admSave.agregarVeterinario(vet3);
+        administradorRepository.save(admSave);
 
         Cliente cliente1 = new Cliente("123", "Carlos Ruiz", "carlos@gmail.com", "3214567890");
         Cliente cliente2 = new Cliente("456", "Lucía Gómez", "lucia@gmail.com", "3101234567");
         Cliente cliente3 = new Cliente("789", "Mateo Torres", "mateo@gmail.com", "3149876543");
         Cliente cliente4 = new Cliente("101", "Ana López", "ana@gmail.com", "3151122334");
         Cliente cliente5 = new Cliente("202", "Diego Pérez", "diego@gmail.com", "3002233445");
+
+        cliente1.setUserEntity(saveUserCli(cliente1));
+        cliente2.setUserEntity(saveUserCli(cliente2));
+        cliente3.setUserEntity(saveUserCli(cliente3));
+        cliente4.setUserEntity(saveUserCli(cliente4));
+        cliente5.setUserEntity(saveUserCli(cliente5));
 
         clienteRepository.saveAll(Arrays.asList(cliente1, cliente2, cliente3, cliente4, cliente5));
 
@@ -220,6 +257,7 @@ public class DatabaseInit implements ApplicationRunner {
                 "cliente" + i + "@gmail.com",
                 "3" + (100000000 + random.nextInt(899999999)) 
             );
+            c.setUserEntity(saveUserCli(c));
             clientes.add(c);
         }
         clienteRepository.saveAll(clientes);
@@ -260,4 +298,36 @@ public class DatabaseInit implements ApplicationRunner {
             mascotas.add(m);
         }
         mascotaRepository.saveAll(mascotas);
-}}
+}
+
+    private UserEntity saveUserVet(Veterinario veterinario){
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUsername(veterinario.getNombreUsuario());
+        userEntity.setPassword(passwordEncoder.encode(veterinario.getContrasenia()));
+        Rol roles = rolRepository.findByNombre("VET").get();
+        userEntity.setRoles(List.of(roles));
+        return userRepository.save(userEntity);
+    }
+
+    private UserEntity saveUserAdm(Administrador admin){
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUsername(admin.getCorreo());
+        userEntity.setPassword(passwordEncoder.encode(admin.getClave()));
+        Rol roles = rolRepository.findByNombre("ADM").get();
+        userEntity.setRoles(List.of(roles));
+        return userRepository.save(userEntity);
+    }
+
+
+    private UserEntity saveUserCli(Cliente cliente){
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUsername(cliente.getCorreo());
+        userEntity.setPassword(passwordEncoder.encode(cliente.getCedula()));
+         Rol roles = rolRepository.findByNombre("CLI").get();
+        userEntity.setRoles(List.of(roles));
+        return userRepository.save(userEntity);
+    }
+
+
+
+}
