@@ -75,7 +75,15 @@ public class MascotaRepositoryTest {
             mascotaRepository.save(mascota5);
 
 
-        Veterinario vet1 = new Veterinario("Dr. Juan Pérez", "Cirugía", "juanPerez", "123", "/assets/images/drJuan.jpeg", 1, 100);
+        Veterinario vet1 = Veterinario.builder()
+        .nombre("Dr. Juan Pérez")
+        .especialidad("Cirugía")
+        .nombreUsuario("juanPerez")
+        .contrasenia("123")
+        .imagen("/assets/images/drJuan.jpeg")
+        .activo(1)
+        .consultas(100)
+        .build();
         veterinarioRepository.save(vet1);
 
         Cliente cliente = new Cliente("123", "Carlos Ruiz", "carlos@gmail.com", "3214567890");

@@ -3,6 +3,8 @@ package com.api.api.config;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -24,9 +26,6 @@ import com.api.api.repository.TratamientoRepository;
 import com.api.api.repository.VeterinarioRepository;
 
 import jakarta.transaction.Transactional;
-import java.util.Random;
-
-import java.util.List;
 
 @Component
 @Transactional
@@ -63,7 +62,15 @@ public class TestDatabaseInit implements ApplicationRunner {
         administradorRepository.save(admin1);
         System.out.println("Administrador creado");
 
-        Veterinario vet1 = new Veterinario("Dr. Juan Pérez", "Cirugía", "juanPerez", "123", "/assets/images/drJuan.jpeg", 1, 100);
+        Veterinario vet1 = Veterinario.builder()
+            .nombre("Dr. Juan Pérez")
+            .especialidad("Cirugía")
+            .nombreUsuario("juanPerez")
+            .contrasenia("123")
+            .imagen("/assets/images/drJuan.jpeg")
+            .activo(1)
+            .consultas(100)
+            .build();
         veterinarioRepository.save(vet1);
         
         admin1.agregarVeterinario(vet1);

@@ -51,8 +51,26 @@ public class TratamientoRepositoryTest {
         medicamentoRepository.deleteAll();
 
         //Veterinarios
-        vet1 = new Veterinario("Dr. Juan Pérez", "Cirugía", "juanPerez", "123", "/assets/images/drJuan.jpeg", 1, 100);
-        vet2 = new Veterinario("Dra. Laura Gómez", "Dermatología", "lauraGomez", "123", "/assets/images/draLaura.jpeg", 1, 85);
+        Veterinario vet1 = Veterinario.builder()
+        .nombre("Dr. Juan Pérez")
+        .especialidad("Cirugía")
+        .nombreUsuario("juanPerez")
+        .contrasenia("123")
+        .imagen("/assets/images/drJuan.jpeg")
+        .activo(1)
+        .consultas(100)
+        .build();
+
+        Veterinario vet2 = Veterinario.builder()
+        .nombre("Dra. Laura Gómez")
+        .especialidad("Dermatología")
+        .nombreUsuario("lauraGomez")
+        .contrasenia("123")
+        .imagen("/assets/images/draLaura.jpeg")
+        .activo(1)
+        .consultas(85)
+        .build();
+        
         veterinarioRepository.saveAll(Arrays.asList(vet1, vet2));
 
         //Clientes

@@ -24,13 +24,18 @@ public class CorsConfig {
         config.setAllowedHeaders(Arrays.asList(
                 HttpHeaders.AUTHORIZATION,
                 HttpHeaders.CONTENT_TYPE,
-                HttpHeaders.ACCEPT
+                HttpHeaders.ACCEPT,
+                HttpHeaders.ORIGIN,
+                HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD,
+                HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS
         ));
-        config.setAllowedMethods(Arrays.asList(
+         config.setAllowedMethods(Arrays.asList(
                 HttpMethod.GET.name(),
                 HttpMethod.POST.name(),
                 HttpMethod.PUT.name(),
-                HttpMethod.DELETE.name()
+                HttpMethod.PATCH.name(),  
+                HttpMethod.DELETE.name(),
+                HttpMethod.OPTIONS.name() 
         ));
 
         source.registerCorsConfiguration("/**", config);

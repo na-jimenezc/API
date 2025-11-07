@@ -72,9 +72,36 @@ public class DatabaseInit implements ApplicationRunner {
         admSave.setUserEntity(userEntity);
 
 
-        Veterinario vet1 = new Veterinario("Dr. Juan Pérez", "Cirugía", "juanPerez", "123", "/assets/images/drJuan.jpeg", 1, 100);
-        Veterinario vet2 = new Veterinario("Dra. Laura Gómez", "Dermatología", "lauraGomez", "123", "/assets/images/draLaura.jpeg", 1, 85);
-        Veterinario vet3 = new Veterinario("Dr. Carlos Rodríguez", "Cardiología", "carlosRod", "123", "/assets/images/drCarlos.jpeg", 1, 120);
+        //TO DO: PATRÓN BUILDER PARA LOS VETERINARIOS
+        Veterinario vet1 = Veterinario.builder()
+            .nombre("Dr. Juan Pérez")
+            .especialidad("Cirugía")
+            .nombreUsuario("juanPerez")
+            .contrasenia("123")
+            .imagen("/assets/images/drJuan.jpeg")
+            .activo(1)
+            .consultas(100)
+            .build();
+
+        Veterinario vet2 = Veterinario.builder()
+            .nombre("Dra. Laura Gómez")
+            .especialidad("Dermatología")
+            .nombreUsuario("lauraGomez")
+            .contrasenia("123")
+            .imagen("/assets/images/draLaura.jpeg")
+            .activo(1)
+            .consultas(85)
+            .build();
+
+        Veterinario vet3 = Veterinario.builder()
+            .nombre("Dr. Carlos Rodríguez")
+            .especialidad("Cardiología")
+            .nombreUsuario("carlosRod")
+            .contrasenia("123")
+            .imagen("/assets/images/drCarlos.jpeg")
+            .activo(1)
+            .consultas(120)
+            .build();
 
         vet1.setUserEntity(saveUserVet(vet1));
         vet2.setUserEntity(saveUserVet(vet2));
@@ -294,7 +321,8 @@ public class DatabaseInit implements ApplicationRunner {
                 estado,
                 activo
             );
-            m.setCliente(clientes.get(random.nextInt(clientes.size())));
+            int randomIndex = random.nextInt(clientes.size());
+            m.setCliente(clientes.get(randomIndex));
             mascotas.add(m);
         }
         mascotaRepository.saveAll(mascotas);

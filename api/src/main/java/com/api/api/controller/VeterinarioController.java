@@ -191,24 +191,21 @@ public class VeterinarioController {
     // http://localhost:8080/api/veterinarios/1/estado
     /* Actualizar el estado (activo/inactivo) de un veterinario */
     @PatchMapping("/{id}/estado")
-    public ResponseEntity<?> actualizarEstado(@PathVariable Long id, @RequestBody Map<String, Integer> request) {
+        public ResponseEntity<?> actualizarEstado(@PathVariable Long id, @RequestBody Map<String, Integer> request) {
         try {
             Integer nuevoEstado = request.get("activo");
-
-            //SE VALIDA QUE EL ESTADO SEA 0 O 1 mandado desde el front
-            if (nuevoEstado==null || (nuevoEstado!= 0 && nuevoEstado!=1)) {
+            if (nuevoEstado == null || (nuevoEstado != 0 && nuevoEstado != 1)) {
                 return ResponseEntity.badRequest().body("El estado debe ser 0 o 1");
             }
-            
-            //Se actualiza el estado por el servicio
-            Veterinario veterinarioActualizado = veterinarioService.actualizarEstado(id, nuevoEstado);
-            if (veterinarioActualizado == null) {
-                return ResponseEntity.notFound().build();
-            }
-            
-            return ResponseEntity.ok(veterinarioActualizado);
+
+            Veterinario actualizado = veterinarioService.actualizarEstado(id, nuevoEstado);
+            return ResponseEntity.ok(actualizado);
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error al actualizar el estado: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al actualizar el estado: " + e.getMessage());
         }
     }
 }

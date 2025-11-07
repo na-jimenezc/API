@@ -2,6 +2,8 @@ package com.api.api.service.serviceImplementation;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.api.api.model.Administrador;
@@ -9,15 +11,19 @@ import com.api.api.model.Tratamiento;
 import com.api.api.model.Veterinario;
 import com.api.api.repository.VeterinarioRepository;
 import com.api.api.service.serviceInterface.VeterinarioService;
-import lombok.RequiredArgsConstructor;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class VeterinarioServiceImpl implements VeterinarioService {
 
+    @Autowired
     private final VeterinarioRepository veterinarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     //Obtrener todos los veterinarios
     @Override
@@ -43,9 +49,17 @@ public class VeterinarioServiceImpl implements VeterinarioService {
         return veterinarioRepository.findById(id).orElse(null);
     }
 
-    //Guardar un nuevo veterinario
+    //Guardar un nuevo veterinario definiendo su contraseña
     @Override
     public Veterinario guardarVeterinario(Veterinario veterinario) {
+        if (veterinario.getUserEntity() != null) {
+            if (veterinario.getContrasenia() != null && !veterinario.getContrasenia().isEmpty()) {
+                veterinario.getUserEntity().setPassword(
+                    passwordEncoder.encode(veterinario.getContrasenia())
+                );
+            }
+        }
+
         return veterinarioRepository.save(veterinario);
     }
 
@@ -53,37 +67,49 @@ public class VeterinarioServiceImpl implements VeterinarioService {
     @Override
     @Transactional
     public void eliminarVeterinario(Long id) {
+        System.out.println("Eliminando veterinario con ID: " + id);
 
-    //Se rompen las relaciones antes de eliminar el veterinario con administradores y tratamientos si queda alguna
         Veterinario veterinario = veterinarioRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Veterinario no encontrado con id: " + id));
 
-        if(veterinario.getAdministradores() != null && !veterinario.getAdministradores().isEmpty()) {
+        System.out.println("Veterinario encontrado: " + veterinario.getNombre());
+
+        if (veterinario.getAdministradores() != null && !veterinario.getAdministradores().isEmpty()) {
+            System.out.println("Rompiendo relación con administradores...");
             for (Administrador admin : veterinario.getAdministradores()) {
                 admin.getVeterinarios().remove(veterinario);
             }
             veterinario.getAdministradores().clear();
         }
 
-        if(veterinario.getTratamientos() != null && !veterinario.getTratamientos().isEmpty()) {
+        if (veterinario.getTratamientos() != null && !veterinario.getTratamientos().isEmpty()) {
+            System.out.println("Rompiendo relación con tratamientos...");
             for (Tratamiento t : veterinario.getTratamientos()) {
-                t.setVeterinario(null); 
+                t.setVeterinario(null);
             }
             veterinario.getTratamientos().clear();
         }
 
+        if (veterinario.getUserEntity() != null) {
+            System.out.println("Rompiendo relación con UserEntity...");
+            veterinario.setUserEntity(null);
+        }
+
+        veterinarioRepository.save(veterinario);
+        System.out.println("Relaciones rotas, procediendo a eliminar...");
+        
         veterinarioRepository.delete(veterinario);
+        System.out.println("Veterinario eliminado correctamente");
     }
 
     //Actualizar el estado (activo/inactivo) de un veterinario
     @Override
     public Veterinario actualizarEstado(Long id, int estado) {
-        Veterinario veterinario = veterinarioRepository.findById(id).orElse(null);
-        if(veterinario != null){
-            veterinario.setActivo(estado);
-            return veterinarioRepository.save(veterinario);
-        }
-        return null;
+        Veterinario veterinario = veterinarioRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Veterinario no encontrado con id " + id));
+
+        veterinario.setActivo(estado);
+        return veterinarioRepository.save(veterinario);
     }
 
     @Override

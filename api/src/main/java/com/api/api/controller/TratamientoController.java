@@ -2,6 +2,7 @@ package com.api.api.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,14 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.api.api.dto.MedicamentoDTO;
 import com.api.api.dto.TratamientoDTO;
 import com.api.api.dto.VeterinarioDTO;
 import com.api.api.model.Tratamiento;
-import com.api.api.service.serviceInterface.MascotaService;
-import com.api.api.service.serviceInterface.MedicamentoService;
 import com.api.api.service.serviceInterface.TratamientoService;
-import com.api.api.service.serviceInterface.VeterinarioService;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
