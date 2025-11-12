@@ -22,7 +22,6 @@ import com.api.api.model.Veterinario;
 import com.api.api.repository.RolRepository;
 import com.api.api.repository.UserEntityRepository;
 
-
 @Service
 public class CustomUserDetailService implements UserDetailsService {
     
@@ -35,22 +34,31 @@ public class CustomUserDetailService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    /*Unico método para traer la informacion de un usuario a traves de su username */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    UserEntity userDB = userRepository.findByUsername(username)
+        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-       UserEntity userDB = userRepository.findByUsername(username).orElseThrow(
-           () -> new UsernameNotFoundException("User not found")
-       );
-
-       UserDetails userDetails = new User(userDB.getUsername(),userDB.getPassword(),mapRolesToAuthorities(userDB.getRoles()));
-
-       return userDetails;
+        return org.springframework.security.core.userdetails.User
+            .withUsername(userDB.getUsername())
+            .password(userDB.getPassword())
+            .authorities(
+                userDB.getRoles().stream()
+                        .map(r -> "ROLE_" + r.getNombre())
+                        .toArray(String[]::new)
+            )
+            .accountExpired(false)
+            .accountLocked(false)
+            .credentialsExpired(false)
+            .disabled(false)
+            .build();
     }
 
 
-    private Collection<GrantedAuthority> mapRolesToAuthorities(List<Rol> roles) {
-        return roles.stream().map(rol -> new SimpleGrantedAuthority(rol.getNombre())).collect(Collectors.toList());
+    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(List<Rol> roles) {
+    return roles.stream()
+        .map(rol -> new SimpleGrantedAuthority(rol.getNombre()))
+        .toList();
     }
 
     //SAVE PARA CADA TIPO DE USUARIO
